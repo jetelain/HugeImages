@@ -101,7 +101,7 @@ namespace HugeImages
             var loaded = parts.Where(p => p.IsLoaded).OrderBy(p => p.LastAccess).ToList();
             if (loaded.Count + count > maxLoadedParts)
             {
-                foreach (var part in loaded.Where(u => u.CanOffload).Take(loaded.Count - maxLoadedParts + count))
+                foreach (var part in loaded.Where(u => u.CanOffloadNow).Take(loaded.Count - maxLoadedParts + count))
                 {
                     await part.OffloadAsync().ConfigureAwait(false);
                 }
@@ -153,7 +153,12 @@ namespace HugeImages
         /// <returns></returns>
         public async Task OffloadAsync()
         {
-            await Parallel.ForEachAsync(parts, async (part, _) => await part.OffloadAsync().ConfigureAwait(false)).ConfigureAwait(false);
+            await Parallel.ForEachAsync(parts, 
+                async (part, _) =>
+                {
+                    await part.OffloadAsync().ConfigureAwait(false);
+                })
+                .ConfigureAwait(false);
         }
 
         /// <summary>

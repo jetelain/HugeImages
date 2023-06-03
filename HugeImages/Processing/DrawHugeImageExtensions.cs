@@ -10,7 +10,7 @@ namespace HugeImages.Processing
         public static void DrawHugeImage<TPixel>(this IImageProcessingContext target, HugeImage<TPixel> sourceImage, Point sourceLocation, float opacity = 1f)
             where TPixel : unmanaged, IPixel<TPixel>
         {
-            target.DrawHugeImageAsync(sourceImage, sourceLocation, Point.Empty, target.GetCurrentSize(), opacity).Wait();
+            target.DrawHugeImageAsync(sourceImage, sourceLocation, opacity).Wait();
         }
 
         public static Task DrawHugeImageAsync<TPixel>(this IImageProcessingContext target, HugeImage<TPixel> sourceImage, Point sourceLocation, float opacity = 1f)

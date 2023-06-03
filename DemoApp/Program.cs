@@ -13,26 +13,33 @@ namespace DemoApp
     {
         static async Task Main(string[] args)
         {
+            using var simage = new Image<Rgb24>(100_000, 100_000);
             // With HugeImage
-            // -> Needs 6 GiB of RAM
+            // -> Needs ~6 GiB of RAM + 30 MiB of mass storage
             using var himage = new HugeImage<Rgb24>(new TemporaryHugeImageStorage(), new Size(100_000, 100_000));
             await himage.MutateAllParallelAsync(d =>
             {
                 d.Fill(new SolidBrush(Color.Blue), new EllipsePolygon(new PointF(50_000, 50_000), 50_000));
             });
             // Most ImaheSharp operations are multi-threaded, MutateAllParallelAsync is not usefull for them
+            // -> Needs ~8 GiB of RAM, due to double-buffer requirement
             //await himage.MutateAllAsync(d =>
             //{
-            //    d.GaussianBlur(10);
+            //    d.GaussianBlur(10); 
             //});
             await himage.OffloadAsync();
 
             // Without HugeImage
-            // -> Needs 30 GiB of RAM and a lot of time (will likely crash)
+            // -> Needs ~30 GiB of RAM
             // using var simage = new Image<Rgb24>(100_000, 100_000);
             // simage.Mutate(d =>
             // {
             //     d.Fill(new SolidBrush(Color.Blue), new EllipsePolygon(new PointF(50_000, 50_000), 50_000));
+            // });
+            // -> Ask for ~60 GiB of RAM (if your hardware can), and will fail with ArgumentOutOfRangeException
+            // simage.Mutate(d =>
+            // {
+            //     d.GaussianBlur(10);
             // });
 
             // Take a slice of the HugeImage (49_500,0)->(50_500,1000)

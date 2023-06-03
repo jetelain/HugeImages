@@ -86,13 +86,14 @@ namespace HugeImages.Processing
             var scaleY = (double)height / image.Size.Height;
             var scaled = new Image<TPixel>(image.Configuration, width, height);
 
-            foreach (var part in image.PartsLoadedFirst) 
+            foreach (var part in image.PartsLoadedFirst)
             {
                 // XXX: DrawImageProcessor does parallel operations, it might be counter-productive to use Parallel.ForEachAsync here
-                using var token = await part.AcquireAsync();
-
-                var partImage = token.GetImageReadOnly().Clone(i => i.Resize(Scaled(part.RealRectangle.Size, scaleX, scaleY)));
-
+                Image<TPixel> partImage;
+                using (var token = await part.AcquireAsync())
+                {
+                    partImage = token.GetImageReadOnly().Clone(i => i.Resize(Scaled(part.RealRectangle.Size, scaleX, scaleY)));
+                }
                 scaled.Mutate(target =>
                 {
                     target.ApplyProcessor(

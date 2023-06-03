@@ -17,7 +17,7 @@ namespace HugeImages.Test.Processing
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
             await image.MutateAllAsync(d =>
             {
-                BasicDrawing(d);
+                Samples.BasicDrawing(d);
             });
             await image.OffloadAsync();
 
@@ -33,7 +33,7 @@ namespace HugeImages.Test.Processing
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
             await image.MutateAllParallelAsync(d =>
             {
-                BasicDrawing(d);
+                Samples.BasicDrawing(d);
             });
             await image.OffloadAsync();
 
@@ -48,7 +48,7 @@ namespace HugeImages.Test.Processing
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
             await image.MutateBufferedAsync(d =>
             {
-                BasicDrawing(d);
+                Samples.BasicDrawing(d);
             });
             await image.OffloadAsync();
 
@@ -64,7 +64,7 @@ namespace HugeImages.Test.Processing
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
             await image.MutateBufferedParallelAsync(d =>
             {
-                BasicDrawing(d);
+                Samples.BasicDrawing(d);
             });
             await image.OffloadAsync();
 
@@ -91,25 +91,17 @@ namespace HugeImages.Test.Processing
             Assert.Equal(Color.Violet.ToPixel<Rgb24>(), ((Image<Rgb24>)storage.Storage[4])[0, 0]);
         }
 
-        private static void BasicDrawing(IImageProcessingContext d)
-        {
-            d.Fill(new SolidBrush(Color.Blue), new EllipsePolygon(new PointF(250, 250), 250));
-            d.Fill(new SolidBrush(Color.Green), new EllipsePolygon(new PointF(750, 250), 250));
-            d.Fill(new SolidBrush(Color.Red), new EllipsePolygon(new PointF(250, 750), 250));
-            d.Fill(new SolidBrush(Color.Yellow), new EllipsePolygon(new PointF(750, 750), 250));
-            d.Fill(new SolidBrush(Color.Violet), new EllipsePolygon(new PointF(500, 500), 250));
-        }
 
         private static async Task CheckReferenceImage(HugeImage<Rgb24> image)
         {
             using var expected = new Image<Rgb24>(1000, 1000);
             expected.Mutate(d =>
             {
-                BasicDrawing(d);
+                Samples.BasicDrawing(d);
             });
 
             using var full = await image.ToScaledImageAsync(1000, 1000);
-            await AssertEqual(expected, full);
+            await Samples.AssertEqual(expected, full);
         }
 
         [Fact]
@@ -119,33 +111,19 @@ namespace HugeImages.Test.Processing
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
             await image.MutateAllAsync(d =>
             {
-                BasicDrawing(d);
+                Samples.BasicDrawing(d);
             });
 
             using var expected = new Image<Rgb24>(1000, 1000);
             expected.Mutate(d =>
             {
-                BasicDrawing(d);
+                Samples.BasicDrawing(d);
                 d.Resize(500, 500);
             });
 
             var full = await image.ToScaledImageAsync(500, 500);
 
-            await AssertEqual(expected, full);
-        }
-
-        private static async Task AssertEqual(Image<Rgb24> expected, Image<Rgb24> full)
-        {
-            try
-            {
-                ImageComparer.TolerantPercentage(5).VerifySimilarity(expected, full);
-            }
-            catch
-            {
-                await full.SaveAsPngAsync(@"c:\temp\full.png");
-                await expected.SaveAsPngAsync(@"c:\temp\expected.png");
-                throw;
-            }
+            await Samples.AssertEqual(expected, full);
         }
 
     }

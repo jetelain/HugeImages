@@ -26,9 +26,9 @@ namespace HugeImages
 
         public bool IsLoaded  => image != null;
 
-        public bool CanOffload => image != null && acquired == 0 && !isOffloading;
+        internal bool CanOffloadNow => image != null && acquired == 0 && !isOffloading;
 
-        public long LastAccess { get; set; }
+        public long LastAccess { get; private set; }
 
         public Rectangle Rectangle { get; }
 
@@ -116,6 +116,15 @@ namespace HugeImages
             }
         }
 
+        /// <summary>
+        /// Acquire a lock on image part to be able to safely use it.
+        /// 
+        /// This operation can be blocked until a lock on an other part is released, as the number
+        /// of simultaneous loaded parts is limited.
+        /// 
+        /// To release the part, you have to dispose the returned object.
+        /// </summary>
+        /// <returns></returns>
         public async Task<HugeImagePartToken<TPixel>> AcquireAsync()
         {
             return new HugeImagePartToken<TPixel>(this, await AcquireImageAsync().ConfigureAwait(false));
