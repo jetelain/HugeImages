@@ -15,11 +15,11 @@ namespace HugeImages.Test.Processing
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
-            await image.MutateAll(d =>
+            await image.MutateAllAsync(d =>
             {
                 BasicDrawing(d);
             });
-            await image.Offload();
+            await image.OffloadAsync();
 
             CheckStorage(storage);
 
@@ -31,11 +31,11 @@ namespace HugeImages.Test.Processing
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
-            await image.MutateAllParallel(d =>
+            await image.MutateAllParallelAsync(d =>
             {
                 BasicDrawing(d);
             });
-            await image.Offload();
+            await image.OffloadAsync();
 
             CheckStorage(storage);
 
@@ -46,11 +46,11 @@ namespace HugeImages.Test.Processing
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
-            await image.MutateBuffered(d =>
+            await image.MutateBufferedAsync(d =>
             {
                 BasicDrawing(d);
             });
-            await image.Offload();
+            await image.OffloadAsync();
 
             CheckStorage(storage);
 
@@ -62,11 +62,11 @@ namespace HugeImages.Test.Processing
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
-            await image.MutateBufferedParallel(d =>
+            await image.MutateBufferedParallelAsync(d =>
             {
                 BasicDrawing(d);
             });
-            await image.Offload();
+            await image.OffloadAsync();
 
             CheckStorage(storage);
 
@@ -108,7 +108,7 @@ namespace HugeImages.Test.Processing
                 BasicDrawing(d);
             });
 
-            using var full = await image.ToScaledImage(1000, 1000);
+            using var full = await image.ToScaledImageAsync(1000, 1000);
             await AssertEqual(expected, full);
         }
 
@@ -117,7 +117,7 @@ namespace HugeImages.Test.Processing
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
-            await image.MutateAll(d =>
+            await image.MutateAllAsync(d =>
             {
                 BasicDrawing(d);
             });
@@ -129,7 +129,7 @@ namespace HugeImages.Test.Processing
                 d.Resize(500, 500);
             });
 
-            var full = await image.ToScaledImage(500, 500);
+            var full = await image.ToScaledImageAsync(500, 500);
 
             await AssertEqual(expected, full);
         }

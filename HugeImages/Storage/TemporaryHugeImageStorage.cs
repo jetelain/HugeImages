@@ -2,7 +2,7 @@
 {
     public sealed class TemporaryHugeImageStorage : IHugeImageStorage, IDisposable
     {
-        private readonly string basePath = Path.Combine(Path.GetTempPath(), "HugeImages", Path.GetRandomFileName());
+        private readonly string basePath = Path.Combine(Path.GetTempPath(), "HugeImages", Guid.NewGuid().ToString());
 
         public IHugeImageStorageSlot CreateSlot(string name, HugeImageSettings settings)
         {

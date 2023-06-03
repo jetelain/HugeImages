@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HugeImages", "HugeImages\Hu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HugeImages.Test", "HugeImages.Test\HugeImages.Test.csproj", "{46DC21DF-EEB7-4CB4-9BCF-4D9735CCFD15}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApp", "DemoApp\DemoApp.csproj", "{8FB1CB74-6616-4E44-AB99-B583868E1A1B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{46DC21DF-EEB7-4CB4-9BCF-4D9735CCFD15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46DC21DF-EEB7-4CB4-9BCF-4D9735CCFD15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46DC21DF-EEB7-4CB4-9BCF-4D9735CCFD15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FB1CB74-6616-4E44-AB99-B583868E1A1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FB1CB74-6616-4E44-AB99-B583868E1A1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FB1CB74-6616-4E44-AB99-B583868E1A1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FB1CB74-6616-4E44-AB99-B583868E1A1B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

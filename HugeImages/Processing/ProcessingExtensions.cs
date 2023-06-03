@@ -7,67 +7,79 @@ namespace HugeImages.Processing
 {
     public static class ProcessingExtensions
     {
-        public static async Task MutateAll<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+        public static async Task MutateAllAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             foreach (var part in image.PartsLoadedFirst)
             {
-                operation(await part.CreateProcessingContext());
+                using (var token = await part.AcquireAsync())
+                {
+                    operation(token.CreateProcessingContext());
+                }
             }
         }
 
-        public static async Task MutateAllParallel<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+        public static async Task MutateAllParallelAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             await Parallel.ForEachAsync(image.PartsLoadedFirst, new ParallelOptions() { MaxDegreeOfParallelism = image.MaxLoadedPartsCount }, async (part, _) =>
             {
-                operation(await part.CreateProcessingContext());
+                using (var token = await part.AcquireAsync())
+                {
+                    operation(token.CreateProcessingContext());
+                }
             });
         }
 
-        public static async Task Mutate<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Action<IImageProcessingContext> operation)
+        public static async Task MutateAsync<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Action<IImageProcessingContext> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             foreach (var part in image.PartsLoadedFirst)
             {
                 if (part.RealRectangle.IntersectsWith(rectangle))
                 {
-                    operation(await part.CreateProcessingContext());
+                    using (var token = await part.AcquireAsync())
+                    {
+                        operation(token.CreateProcessingContext());
+                    }
                 }
             }
         }
 
-        public static async Task MutateParallel<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Action<IImageProcessingContext> operation)
+        public static async Task MutateParallelAsync<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Action<IImageProcessingContext> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             await Parallel.ForEachAsync(image.PartsLoadedFirst, new ParallelOptions() { MaxDegreeOfParallelism = image.MaxLoadedPartsCount }, async (part, _) =>
             {
                 if (part.RealRectangle.IntersectsWith(rectangle))
                 {
-                    operation(await part.CreateProcessingContext());
+                    using (var token = await part.AcquireAsync())
+                    {
+                        operation(token.CreateProcessingContext());
+                    }
                 }
             });
         }
 
-        public static async Task MutateBuffered<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+        public static async Task MutateBufferedAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             var buffer = new ImageProcessingBuffer(image.Size, image.Configuration);
             operation(buffer);
-            await Mutate(image, buffer.Bounds, buffer.ApplyTo);
+            await MutateAsync(image, buffer.Bounds, buffer.ApplyTo);
             // XXX: We could reduce loaded parts by testing each operation bounds
         }
 
-        public static async Task MutateBufferedParallel<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+        public static async Task MutateBufferedParallelAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             var buffer = new ImageProcessingBuffer(image.Size, image.Configuration);
             operation(buffer);
-            await MutateParallel(image, buffer.Bounds, buffer.ApplyTo); 
+            await MutateParallelAsync(image, buffer.Bounds, buffer.ApplyTo); 
             // XXX: We could reduce loaded parts by testing each operation bounds
         }
 
-        public static async Task<Image<TPixel>> ToScaledImage<TPixel>(this HugeImage<TPixel> image, int width, int height)
+        public static async Task<Image<TPixel>> ToScaledImageAsync<TPixel>(this HugeImage<TPixel> image, int width, int height)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             var scaleX = (double)width / image.Size.Width;
@@ -77,8 +89,9 @@ namespace HugeImages.Processing
             foreach (var part in image.PartsLoadedFirst) 
             {
                 // XXX: DrawImageProcessor does parallel operations, it might be counter-productive to use Parallel.ForEachAsync here
+                using var token = await part.AcquireAsync();
 
-                var partImage = (await part.GetImageReadOnly()).Clone(i => i.Resize(Scaled(part.RealRectangle.Size, scaleX, scaleY)));
+                var partImage = token.GetImageReadOnly().Clone(i => i.Resize(Scaled(part.RealRectangle.Size, scaleX, scaleY)));
 
                 scaled.Mutate(target =>
                 {

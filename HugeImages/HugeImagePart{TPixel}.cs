@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using HugeImages.Processing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -9,11 +8,13 @@ namespace HugeImages
     public sealed class HugeImagePart<TPixel> : IDisposable
         where TPixel : unmanaged, IPixel<TPixel>
     {
+        private readonly SemaphoreSlim locker = new SemaphoreSlim(1, 1);
         private readonly HugeImage<TPixel> parent;
         private readonly int partId;
 
         private Image<TPixel>? image;
-        private bool hasChanged;
+        private int acquired;
+        private bool isOffloading;
 
         internal HugeImagePart(Rectangle rectangle, Rectangle realRectangle, int partId, HugeImage<TPixel> parent)
         {
@@ -25,71 +26,108 @@ namespace HugeImages
 
         public bool IsLoaded  => image != null;
 
+        public bool CanOffload => image != null && acquired == 0 && !isOffloading;
+
         public long LastAccess { get; set; }
 
         public Rectangle Rectangle { get; }
 
         public Rectangle RealRectangle { get; }
 
-        internal async Task<Image<TPixel>> GetImageReadOnly()
+        internal bool HasChanged { get; set; }
+
+        private async Task<Image<TPixel>> AcquireImageAsync()
         {
-            if (image == null)
+            await locker.WaitAsync().ConfigureAwait(false);
+            try
             {
-                image = await parent.LoadImagePart(partId);
-                if (image != null && (image.Width != RealRectangle.Width || image.Height != RealRectangle.Height))
+                if (Interlocked.Increment(ref acquired) == 1)
                 {
-                    throw new IOException("Image size does not match.");
+                    // we must acquire the right to lock an image
+                    await parent.AcquiredParts.WaitAsync().ConfigureAwait(false);
                 }
-                hasChanged = false;
+                if (image == null)
+                {
+                    image = await parent.LoadImagePart(partId).ConfigureAwait(false);
+                    if (image != null && (image.Width != RealRectangle.Width || image.Height != RealRectangle.Height))
+                    {
+                        throw new IOException("Image size does not match.");
+                    }
+                    HasChanged = false;
+                    if (image == null)
+                    {
+                        image = new Image<TPixel>(parent.Configuration, RealRectangle.Width, RealRectangle.Height, parent.Background);
+                    }
+                }
+                LastAccess = Stopwatch.GetTimestamp();
             }
-            if (image == null)
+            finally
             {
-                image = new Image<TPixel>(parent.Configuration, RealRectangle.Width, RealRectangle.Height, parent.Background);
-                hasChanged = false;
+                locker.Release();
             }
-            LastAccess = Stopwatch.GetTimestamp();
             return image;
         }
 
-        public async Task<Image<TPixel>> GetImageReadWrite()
+        internal async Task OffloadAsync()
         {
-            var image = await GetImageReadOnly();
-            hasChanged = true;
-            return image;
-        }
-
-        internal async Task<IImageProcessingContext> CreateProcessingContext()
-        {
-            return new ImagePartProcessingContext<TPixel>(await GetImageReadWrite(), RealRectangle, parent.Configuration);
-        }
-        
-        public async Task Offload()
-        {
-            if (image != null)
+            await locker.WaitAsync().ConfigureAwait(false);
+            try
             {
-                if (hasChanged)
+                if (acquired != 0)
                 {
-                    await parent.SaveImagePart(partId, image);
-                    hasChanged = false;
+                    throw new InvalidOperationException("This part is still acquired.");
                 }
-                image.Dispose();
-                image = null;
+                if (image != null)
+                {
+                    isOffloading = true;
+                    if (HasChanged)
+                    {
+                        HasChanged = false;
+                        await parent.SaveImagePart(partId, image).ConfigureAwait(false);
+                    }
+                    image.Dispose();
+                    parent.LoadedParts.Release();
+                    image = null;
+                    isOffloading = false;
+                }
+            }
+            finally
+            { 
+                locker.Release(); 
             }
         }
 
         public void Dispose()
         {
-            if (image != null)
+            var oldimage = Interlocked.Exchange(ref image, null);
+            if (oldimage != null)
             {
-                image.Dispose();
-                image = null;
+                oldimage.Dispose();
+                parent.LoadedParts.Release();
+            }
+            locker.Dispose();
+        }
+
+        public async Task MutateAsync(Action<IImageProcessingContext> operation)
+        {
+            using (var token = await AcquireAsync().ConfigureAwait(false))
+            {
+                token.GetImageReadWrite().Mutate(operation);
             }
         }
 
-        public async Task Mutate(Action<IImageProcessingContext> operation)
+        public async Task<HugeImagePartToken<TPixel>> AcquireAsync()
         {
-            (await GetImageReadWrite()).Mutate(operation);
+            return new HugeImagePartToken<TPixel>(this, await AcquireImageAsync().ConfigureAwait(false));
         }
 
+        internal void Release()
+        {
+            if (Interlocked.Decrement(ref acquired) == 0)
+            {
+                // we release the right to lock an image
+                parent.AcquiredParts.Release();
+            }
+        }
     }
 }

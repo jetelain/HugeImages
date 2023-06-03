@@ -50,6 +50,8 @@ namespace HugeImages
             this.maxLoadedParts = Math.Min(parts.Count, ComputeMaxLoadedParts(settings.MemoryLimit, parts.Max(p => p.RealRectangle.Width), parts.Max(p => p.RealRectangle.Height)));
             Configuration = settings.Configuration;
             Background = background;
+            AcquiredParts = new SemaphoreSlim(maxLoadedParts, maxLoadedParts);
+            LoadedParts = new SemaphoreSlim(maxLoadedParts, maxLoadedParts);
         }
 
         private static int ComputeMaxLoadedParts(long memoryLimit, long width, long height)
@@ -86,18 +88,22 @@ namespace HugeImages
 
         internal TPixel Background { get; }
 
+        internal SemaphoreSlim AcquiredParts { get; }
+
+        internal SemaphoreSlim LoadedParts { get; }
+
         /// <summary>
         /// Free memory to load one ore more parts
         /// </summary>
         /// <returns></returns>
-        internal async Task RequestFreeParts(int count)
+        internal async Task RequestFreePartsAsync(int count)
         {
             var loaded = parts.Where(p => p.IsLoaded).OrderBy(p => p.LastAccess).ToList();
             if (loaded.Count + count > maxLoadedParts)
             {
-                foreach (var part in loaded.Take(maxLoadedParts - loaded.Count + count))
+                foreach (var part in loaded.Where(u => u.CanOffload).Take(loaded.Count - maxLoadedParts + count))
                 {
-                    await part.Offload();
+                    await part.OffloadAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -145,15 +151,15 @@ namespace HugeImages
         /// Unload all images from RAM, and update mass storage if required.
         /// </summary>
         /// <returns></returns>
-        public async Task Offload()
+        public async Task OffloadAsync()
         {
-            await Parallel.ForEachAsync(parts, async (part, _) => await part.Offload());
+            await Parallel.ForEachAsync(parts, async (part, _) => await part.OffloadAsync().ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Unload all images from RAM and delete temporary mass storage.
         /// 
-        /// Warning : If a persistent mass storage is used, most recent changes will be lost if <see cref="Offload"/> has not been called before.
+        /// Warning : If a persistent mass storage is used, most recent changes will be lost if <see cref="OffloadAsync"/> has not been called before.
         /// </summary>
         public void Dispose()
         {
@@ -162,12 +168,18 @@ namespace HugeImages
                 part.Dispose();
             }
             slot.Dispose();
+            AcquiredParts.Dispose();
+            LoadedParts.Dispose();
         }
 
         internal async Task<Image<TPixel>?> LoadImagePart(int partId)
         {
-            await RequestFreeParts(1);
-            return await slot.LoadImagePart<TPixel>(partId);
+            do
+            {
+                await RequestFreePartsAsync(1).ConfigureAwait(false);
+            } while (!await LoadedParts.WaitAsync(500).ConfigureAwait(false));
+
+            return await slot.LoadImagePart<TPixel>(partId).ConfigureAwait(false);
         }
 
         internal Task SaveImagePart(int partId, Image<TPixel> image)
