@@ -13,7 +13,6 @@ namespace DemoApp
     {
         static async Task Main(string[] args)
         {
-            using var simage = new Image<Rgb24>(100_000, 100_000);
             // With HugeImage
             // -> Needs ~6 GiB of RAM + 30 MiB of mass storage
             using var himage = new HugeImage<Rgb24>(new TemporaryHugeImageStorage(), new Size(100_000, 100_000));

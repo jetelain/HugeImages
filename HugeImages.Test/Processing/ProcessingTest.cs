@@ -11,7 +11,7 @@ namespace HugeImages.Test.Processing
     public class ProcessingTest
     {
         [Fact]
-        public async Task HugeImage_MutateAll_Fill()
+        public async Task HugeImage_MutateAllAsync_Fill()
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
@@ -27,7 +27,7 @@ namespace HugeImages.Test.Processing
         }
 
         [Fact]
-        public async Task HugeImage_MutateAllParallel_Fill()
+        public async Task HugeImage_MutateAllParallelAsync_Fill()
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
@@ -42,11 +42,11 @@ namespace HugeImages.Test.Processing
             await CheckReferenceImage(image);
         }
         [Fact]
-        public async Task HugeImage_MutateBuffered_Fill()
+        public async Task HugeImage_MutateAsync_Fill()
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
-            await image.MutateBufferedAsync(d =>
+            await image.MutateAsync(d =>
             {
                 Samples.BasicDrawing(d);
             });
@@ -58,11 +58,11 @@ namespace HugeImages.Test.Processing
         }
 
         [Fact]
-        public async Task HugeImage_MutateBufferedParallel_Fill()
+        public async Task HugeImage_MutateParallelAsync_Fill()
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
-            await image.MutateBufferedParallelAsync(d =>
+            await image.MutateParallelAsync(d =>
             {
                 Samples.BasicDrawing(d);
             });

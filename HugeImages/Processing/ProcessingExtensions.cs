@@ -31,7 +31,7 @@ namespace HugeImages.Processing
             });
         }
 
-        public static async Task MutateAsync<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Action<IImageProcessingContext> operation)
+        public static async Task MutateAreaAsync<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Action<IImageProcessingContext> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             foreach (var part in image.PartsLoadedFirst)
@@ -46,7 +46,7 @@ namespace HugeImages.Processing
             }
         }
 
-        public static async Task MutateParallelAsync<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Action<IImageProcessingContext> operation)
+        public static async Task MutateAreaParallelAsync<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Action<IImageProcessingContext> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             await Parallel.ForEachAsync(image.PartsLoadedFirst, new ParallelOptions() { MaxDegreeOfParallelism = image.MaxLoadedPartsCount }, async (part, _) =>
@@ -61,21 +61,21 @@ namespace HugeImages.Processing
             });
         }
 
-        public static async Task MutateBufferedAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+        public static async Task MutateAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             var buffer = new ImageProcessingBuffer(image.Size, image.Configuration);
             operation(buffer);
-            await MutateAsync(image, buffer.Bounds, buffer.ApplyTo);
+            await MutateAreaAsync(image, buffer.Bounds, buffer.ApplyTo);
             // XXX: We could reduce loaded parts by testing each operation bounds
         }
 
-        public static async Task MutateBufferedParallelAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+        public static async Task MutateParallelAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             var buffer = new ImageProcessingBuffer(image.Size, image.Configuration);
             operation(buffer);
-            await MutateParallelAsync(image, buffer.Bounds, buffer.ApplyTo); 
+            await MutateAreaParallelAsync(image, buffer.Bounds, buffer.ApplyTo); 
             // XXX: We could reduce loaded parts by testing each operation bounds
         }
 
