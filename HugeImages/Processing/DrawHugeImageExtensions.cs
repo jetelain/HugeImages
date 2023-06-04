@@ -16,6 +16,11 @@ namespace HugeImages.Processing
         public static Task DrawHugeImageAsync<TPixel>(this IImageProcessingContext target, HugeImage<TPixel> sourceImage, Point sourceLocation, float opacity = 1f)
             where TPixel : unmanaged, IPixel<TPixel>
         {
+            if (target is IHugeImageProcessingContext htarget)
+            {
+                // If target is also an HugeImage, we have to use the full target size, not only the current part size
+                return htarget.DrawHugeImageAsync(sourceImage, sourceLocation, Point.Empty, htarget.ImageSize, opacity);
+            }
             return target.DrawHugeImageAsync(sourceImage, sourceLocation, Point.Empty, target.GetCurrentSize(), opacity);
         }
 
@@ -28,6 +33,12 @@ namespace HugeImages.Processing
         public static async Task DrawHugeImageAsync<TPixel>(this IImageProcessingContext target, HugeImage<TPixel> sourceImage, Point sourceLocation, Point targetLocation, Size size, float opacity = 1f)
             where TPixel : unmanaged, IPixel<TPixel>
         {
+            if (target is IHugeImageProcessingContext htarget)
+            {
+                // If target is also an HugeImage, we can optimize the operation
+                await htarget.DrawHugeImageAsync(sourceImage, sourceLocation, targetLocation, size, opacity);
+                return;
+            }
             var options = target.GetGraphicsOptions();
             var sourceRectangle = new Rectangle(sourceLocation, size);
             var delta = new Size(sourceLocation.X - targetLocation.X, sourceLocation.Y - targetLocation.Y);
@@ -47,7 +58,7 @@ namespace HugeImages.Processing
                                 opacity),
                             new Rectangle(
                                 intersection.Location - delta,  // Position of intersection within target coordinates system
-                                new Size(intersection.Size)));
+                                intersection.Size));
                     }
                 }
             }

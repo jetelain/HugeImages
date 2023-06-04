@@ -1,4 +1,6 @@
-﻿using SixLabors.ImageSharp;
+﻿using HugeImages.Processing.Buffer;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Drawing;
@@ -7,75 +9,111 @@ namespace HugeImages.Processing
 {
     public static class ProcessingExtensions
     {
-        public static async Task MutateAllAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+        public static ValueTask MutateAllAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+            where TPixel : unmanaged, IPixel<TPixel>
+        {
+            return MutateAllAsync(image, d => { operation(d); return ValueTask.CompletedTask; });
+        }
+
+        public static async ValueTask MutateAllAsync<TPixel>(this HugeImage<TPixel> image, Func<IImageProcessingContext, ValueTask> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             foreach (var part in image.PartsLoadedFirst)
             {
-                using (var token = await part.AcquireAsync())
+                using (var token = await part.AcquireAsync().ConfigureAwait(false))
                 {
-                    operation(token.CreateProcessingContext());
+                    await operation(token.CreateProcessingContext()).ConfigureAwait(false);
                 }
             }
         }
 
-        public static async Task MutateAllParallelAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+        public static ValueTask MutateAllParallelAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+            where TPixel : unmanaged, IPixel<TPixel>
+        {
+            return MutateAllParallelAsync(image, d => { operation(d); return ValueTask.CompletedTask; });
+        }
+
+        public static async ValueTask MutateAllParallelAsync<TPixel>(this HugeImage<TPixel> image, Func<IImageProcessingContext, ValueTask> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             await Parallel.ForEachAsync(image.PartsLoadedFirst, new ParallelOptions() { MaxDegreeOfParallelism = image.MaxLoadedPartsCount }, async (part, _) =>
             {
-                using (var token = await part.AcquireAsync())
+                using (var token = await part.AcquireAsync().ConfigureAwait(false))
                 {
-                    operation(token.CreateProcessingContext());
+                    await operation(token.CreateProcessingContext()).ConfigureAwait(false);
                 }
             });
         }
 
-        public static async Task MutateAreaAsync<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Action<IImageProcessingContext> operation)
+        public static ValueTask MutateAreaAsync<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Action<IImageProcessingContext> operation)
+            where TPixel : unmanaged, IPixel<TPixel>
+        {
+            return MutateAreaAsync(image, rectangle, d => { operation(d); return ValueTask.CompletedTask; });
+        }
+
+        public static async ValueTask MutateAreaAsync<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Func<IImageProcessingContext,ValueTask> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             foreach (var part in image.PartsLoadedFirst)
             {
                 if (part.RealRectangle.IntersectsWith(rectangle))
                 {
-                    using (var token = await part.AcquireAsync())
+                    using (var token = await part.AcquireAsync().ConfigureAwait(false))
                     {
-                        operation(token.CreateProcessingContext());
+                        await operation(token.CreateProcessingContext()).ConfigureAwait(false);
                     }
                 }
             }
         }
 
-        public static async Task MutateAreaParallelAsync<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Action<IImageProcessingContext> operation)
+        public static ValueTask MutateAreaParallelAsync<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Action<IImageProcessingContext> operation)
+            where TPixel : unmanaged, IPixel<TPixel>
+        {
+            return MutateAreaParallelAsync(image, rectangle, d => { operation(d); return ValueTask.CompletedTask; });
+        }
+
+        public static async ValueTask MutateAreaParallelAsync<TPixel>(this HugeImage<TPixel> image, Rectangle rectangle, Func<IImageProcessingContext,ValueTask> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             await Parallel.ForEachAsync(image.PartsLoadedFirst, new ParallelOptions() { MaxDegreeOfParallelism = image.MaxLoadedPartsCount }, async (part, _) =>
             {
                 if (part.RealRectangle.IntersectsWith(rectangle))
                 {
-                    using (var token = await part.AcquireAsync())
+                    using (var token = await part.AcquireAsync().ConfigureAwait(false))
                     {
-                        operation(token.CreateProcessingContext());
+                        await operation(token.CreateProcessingContext()).ConfigureAwait(false);
                     }
                 }
             });
         }
 
-        public static async Task MutateAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+        public static ValueTask MutateAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+            where TPixel : unmanaged, IPixel<TPixel>
+        {
+            return MutateAsync(image, d => { operation(d); return ValueTask.CompletedTask; });
+        }
+
+        public static async ValueTask MutateAsync<TPixel>(this HugeImage<TPixel> image, Func<IImageProcessingContext,ValueTask> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             var buffer = new ImageProcessingBuffer(image.Size, image.Configuration);
-            operation(buffer);
-            await MutateAreaAsync(image, buffer.Bounds, buffer.ApplyTo);
+            await operation(buffer).ConfigureAwait(false);
+            await MutateAreaAsync(image, buffer.Bounds, buffer.ApplyTo).ConfigureAwait(false);
             // XXX: We could reduce loaded parts by testing each operation bounds
         }
 
-        public static async Task MutateParallelAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+        public static ValueTask MutateParallelAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
+            where TPixel : unmanaged, IPixel<TPixel>
+        {
+            return MutateParallelAsync(image, d => { operation(d); return ValueTask.CompletedTask; });
+        }
+
+        public static async ValueTask MutateParallelAsync<TPixel>(this HugeImage<TPixel> image, Func<IImageProcessingContext, ValueTask> operation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
             var buffer = new ImageProcessingBuffer(image.Size, image.Configuration);
-            operation(buffer);
-            await MutateAreaParallelAsync(image, buffer.Bounds, buffer.ApplyTo); 
+            await operation(buffer).ConfigureAwait(false);
+            await MutateAreaParallelAsync(image, buffer.Bounds, buffer.ApplyTo).ConfigureAwait(false);
             // XXX: We could reduce loaded parts by testing each operation bounds
         }
 
@@ -121,6 +159,25 @@ namespace HugeImages.Processing
         private static Size Scaled(Size location, double scaleX, double scaleY)
         {
             return new Size((int)Math.Round(location.Width * scaleX), (int)Math.Round(location.Height * scaleY));
+        }
+
+        public static Task MutateAsync<TPixel>(this Image<TPixel> image, Func<IImageProcessingContext,ValueTask> asyncOperation)
+            where TPixel : unmanaged, IPixel<TPixel>
+        {
+            return MutateAsync(image, image.GetConfiguration(), asyncOperation);
+        }
+
+        public static async Task MutateAsync<TPixel>(this Image<TPixel> image, Configuration configuration, Func<IImageProcessingContext, ValueTask> asyncOperation)
+            where TPixel : unmanaged, IPixel<TPixel>
+        {
+            IImageProcessingContext? captured = null;
+            image.Mutate(configuration, d => { captured = d; });
+            // Mutate does basicly :
+            //   IInternalImageProcessingContext<TPixel> operationsRunner
+            //     = configuration.ImageOperationsProvider.CreateImageProcessingContext(configuration, source, true);
+            //   operation(operationsRunner);
+            // so we can keep the IImageProcessingContext
+            await asyncOperation(captured!).ConfigureAwait(false);
         }
     }
 }

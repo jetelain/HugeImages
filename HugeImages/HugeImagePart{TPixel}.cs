@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.Processing;
 
 namespace HugeImages
 {
-    public sealed class HugeImagePart<TPixel> : IDisposable
+    public sealed class HugeImagePart<TPixel> : IDisposable, IHugeImagePart
         where TPixel : unmanaged, IPixel<TPixel>
     {
         private readonly SemaphoreSlim locker = new SemaphoreSlim(1, 1);
@@ -35,6 +35,8 @@ namespace HugeImages
         public Rectangle RealRectangle { get; }
 
         internal bool HasChanged { get; set; }
+
+        internal HugeImage<TPixel> Parent => parent;
 
         private async Task<Image<TPixel>> AcquireImageAsync()
         {

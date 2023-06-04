@@ -9,7 +9,7 @@ namespace HugeImages
     /// Image with extremely large dimensions. Use mass storage to limit memory consumption.
     /// </summary>
     /// <typeparam name="TPixel"></typeparam>
-    public sealed class HugeImage<TPixel> : IDisposable
+    public sealed class HugeImage<TPixel> : IDisposable, IHugeImage
         where TPixel : unmanaged, IPixel<TPixel>
     {
         private readonly IHugeImageStorageSlot slot;
@@ -91,6 +91,8 @@ namespace HugeImages
         internal SemaphoreSlim AcquiredParts { get; }
 
         internal SemaphoreSlim LoadedParts { get; }
+
+        IEnumerable<IHugeImagePart> IHugeImage.Parts => Parts;
 
         /// <summary>
         /// Free memory to load one ore more parts

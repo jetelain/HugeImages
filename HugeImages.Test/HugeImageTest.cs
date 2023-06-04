@@ -6,7 +6,7 @@ namespace HugeImages.Test
     public class HugeImageTest
     {
         [Fact]
-        public void HugeImage_GetPartSize()
+        public void GetPartSize()
         {
             Assert.Equal(50, HugeImage<Rgb24>.GetPartSize(100, 50));
             Assert.Equal(34, HugeImage<Rgb24>.GetPartSize(102, 50));
@@ -15,7 +15,7 @@ namespace HugeImages.Test
         }
 
         [Fact]
-        public void HugeImage_Parts()
+        public void Parts()
         {
             var image = new HugeImage<Rgb24>(new HugeImageStorageMock(), new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
             var parts = image.Parts;
@@ -64,7 +64,7 @@ namespace HugeImages.Test
         }
 
         [Fact]
-        public void HugeImage_MaxLoadedPartsCount()
+        public void MaxLoadedPartsCount()
         {
             var image = new HugeImage<Rgb24>(new HugeImageStorageMock(), new Size(1500, 1500), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
             Assert.Equal(9, image.MaxLoadedPartsCount);

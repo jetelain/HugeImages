@@ -11,7 +11,7 @@ namespace HugeImages.Test.Processing
     public class ProcessingTest
     {
         [Fact]
-        public async Task HugeImage_MutateAllAsync_Fill()
+        public async Task MutateAllAsync_Fill()
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
@@ -27,7 +27,7 @@ namespace HugeImages.Test.Processing
         }
 
         [Fact]
-        public async Task HugeImage_MutateAllParallelAsync_Fill()
+        public async Task MutateAllParallelAsync_Fill()
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
@@ -42,7 +42,7 @@ namespace HugeImages.Test.Processing
             await CheckReferenceImage(image);
         }
         [Fact]
-        public async Task HugeImage_MutateAsync_Fill()
+        public async Task MutateAsync_Fill()
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
@@ -58,7 +58,7 @@ namespace HugeImages.Test.Processing
         }
 
         [Fact]
-        public async Task HugeImage_MutateParallelAsync_Fill()
+        public async Task MutateParallelAsync_Fill()
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
@@ -105,7 +105,7 @@ namespace HugeImages.Test.Processing
         }
 
         [Fact]
-        public async Task HugeImage_ToImageScaled()
+        public async Task ToImageScaled()
         {
             var storage = new HugeImageStorageMock();
             using var image = new HugeImage<Rgb24>(storage, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
