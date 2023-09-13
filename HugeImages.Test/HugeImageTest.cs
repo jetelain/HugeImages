@@ -8,10 +8,10 @@ namespace HugeImages.Test
         [Fact]
         public void GetPartSize()
         {
-            Assert.Equal(50, HugeImage<Rgb24>.GetPartSize(100, 50));
-            Assert.Equal(34, HugeImage<Rgb24>.GetPartSize(102, 50));
-            Assert.Equal(25, HugeImage<Rgb24>.GetPartSize(100, 30));
-            Assert.Equal(26, HugeImage<Rgb24>.GetPartSize(102, 30));
+            Assert.Equal(50, HugeImageSettings.GetPartSize(100, 50));
+            Assert.Equal(34, HugeImageSettings.GetPartSize(102, 50));
+            Assert.Equal(25, HugeImageSettings.GetPartSize(100, 30));
+            Assert.Equal(26, HugeImageSettings.GetPartSize(102, 30));
         }
 
         [Fact]

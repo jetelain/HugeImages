@@ -4,14 +4,8 @@ using SixLabors.ImageSharp.Formats.Png;
 
 namespace HugeImages
 {
-    public class HugeImageSettings
+    public class HugeImageSettings : HugeImageSettingsBase
     {
-        /// <summary>
-        /// Default value for <see cref="MemoryLimit"/>.
-        /// It corresponds to 6 GiB, or with default part size, ~6 parts loaded simultaneously
-        /// </summary>
-        public const long DefaultMemoryLimit = 6_442_450_944;
-
         /// <summary>
         /// Default value for <see cref="PartMaxSize"/>.
         /// It corresponds to a 1 GiB image (32bpp).
@@ -29,12 +23,6 @@ namespace HugeImages
         /// It corresponds to a 8GiB image (32bpp), this is not suitable for most system. Default value is more versatile.
         /// </summary>
         public const int PartMaxSizeLimit = 46340; 
-
-        // XXX: Use MemoryCache instead to allow to share quota between instances ?
-        /// <summary>
-        /// Memory usage limit for each <see cref="HugeImage{TPixel}"/> instance.
-        /// </summary>
-        public long MemoryLimit { get; set; } = DefaultMemoryLimit;
 
         /// <summary>
         /// Size limit for each image part (including parts overlap).
@@ -55,13 +43,62 @@ namespace HugeImages
         public int PartOverlap { get; set; } = DefaultPartOverlap;
 
         /// <summary>
-        /// ImageSharp configuration to use for image
-        /// </summary>
-        public Configuration Configuration { get; set; } = Configuration.Default;
-
-        /// <summary>
         /// Image format to use for mass storage
         /// </summary>
         public IImageFormat StorageFormat { get; set; } = PngFormat.Instance;
+
+        /// <inheritdoc />
+        public override List<HugeImagePartDefinition> CreateParts(Size size)
+        {
+            ValidateSettings();
+
+            var maxSizeWithoutOverlap = PartMaxSize - PartOverlap - PartOverlap;
+            var partSize = new Size(GetPartSize(size.Width, maxSizeWithoutOverlap), GetPartSize(size.Height, maxSizeWithoutOverlap));
+            var parts = new List<HugeImagePartDefinition>();
+
+            for (var x = 0; x < size.Width; x += partSize.Width)
+            {
+                for (var y = 0; y < size.Height; y += partSize.Height)
+                {
+                    var start = new Point(x, y);
+                    var partSizeAdjusted = new Size(
+                        Math.Min(partSize.Width, size.Width - start.X),
+                        Math.Min(partSize.Height, size.Height - start.Y));
+                    var realStart = new Point(
+                        Math.Max(0, x - PartOverlap),
+                        Math.Max(0, y - PartOverlap));
+                    var realPartSize = new Size(
+                        Math.Min(partSize.Width + PartOverlap, size.Width - realStart.X),
+                        Math.Min(partSize.Height + PartOverlap, size.Height - realStart.Y));
+                    if (x > 0 && x + partSize.Width < size.Width)
+                    {
+                        realPartSize.Width += PartOverlap;
+                    }
+                    if (y > 0 && y + partSize.Height < size.Height)
+                    {
+                        realPartSize.Height += PartOverlap;
+                    }
+                    parts.Add(new HugeImagePartDefinition(new Rectangle(start, partSizeAdjusted), new Rectangle(realStart, realPartSize), parts.Count + 1));
+                }
+            }
+            return parts;
+        }
+
+        private void ValidateSettings()
+        {
+            if (PartMaxSize <= 0 || PartMaxSize > PartMaxSizeLimit)
+            {
+                throw new ArgumentOutOfRangeException("settings", $"PartMaxSize is {PartMaxSize}, it must be greater than 0 and lower than {PartMaxSizeLimit}.");
+            }
+            if (PartOverlap > PartMaxSize / 4 || PartOverlap <= 0)
+            {
+                throw new ArgumentOutOfRangeException("settings", $"PartOverlap is {PartOverlap}, it must be between 0 and {PartMaxSize / 4} (PartMaxSize/4).");
+            }
+        }
+
+        internal static int GetPartSize(double size, double maxSize)
+        {
+            return (int)Math.Ceiling(size / Math.Ceiling(size / maxSize));
+        }
     }
 }

@@ -33,20 +33,11 @@ namespace HugeImages
         {
         }
 
-        private HugeImage(IHugeImageStorageSlot slot, Size size, HugeImageSettings settings, TPixel background)
+        public HugeImage(IHugeImageStorageSlot slot, Size size, HugeImageSettingsBase settings, TPixel background)
         {
-            if (settings.PartMaxSize <= 0 || settings.PartMaxSize > HugeImageSettings.PartMaxSizeLimit)
-            {
-                throw new ArgumentOutOfRangeException(nameof(settings), $"PartMaxSize is {settings.PartMaxSize}, it must be greater than 0 and lower than {HugeImageSettings.PartMaxSizeLimit}.");
-            }
-            if (settings.PartOverlap > settings.PartMaxSize / 4 || settings.PartOverlap <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(settings), $"PartOverlap is {settings.PartOverlap}, it must be between 0 and {settings.PartMaxSize / 4} (PartMaxSize/4).");
-            }
-
             this.slot = slot;
             this.size = size;
-            this.parts = CreateParts(size, settings.PartMaxSize, settings.PartOverlap);
+            this.parts = settings.CreateParts(size).Select((def, index) => new HugeImagePart<TPixel>(def.Rectangle, def.RealRectangle, def.PartId ?? (index + 1), this)).ToList();
             this.maxLoadedParts = Math.Min(parts.Count, ComputeMaxLoadedParts(settings.MemoryLimit, parts.Max(p => p.RealRectangle.Width), parts.Max(p => p.RealRectangle.Height)));
             Configuration = settings.Configuration;
             Background = background;
@@ -108,45 +99,6 @@ namespace HugeImages
                     await part.OffloadAsync().ConfigureAwait(false);
                 }
             }
-        }
-
-        private List<HugeImagePart<TPixel>> CreateParts(Size size, int maxSize, int overlap)
-        {
-            var maxSizeWithoutOverlap = maxSize - overlap - overlap;
-            var partSize = new Size(GetPartSize(size.Width, maxSizeWithoutOverlap), GetPartSize(size.Height, maxSizeWithoutOverlap));
-            var parts = new List<HugeImagePart<TPixel>>();
-
-            for (var x = 0; x < size.Width; x += partSize.Width)
-            {
-                for (var y = 0; y < size.Height; y += partSize.Height)
-                {
-                    var start = new Point(x, y);
-                    var partSizeAdjusted = new Size(
-                        Math.Min(partSize.Width, size.Width - start.X),
-                        Math.Min(partSize.Height, size.Height - start.Y));
-                    var realStart = new Point(
-                        Math.Max(0, x - overlap), 
-                        Math.Max(0, y - overlap));
-                    var realPartSize = new Size(
-                        Math.Min(partSize.Width + overlap, size.Width - realStart.X), 
-                        Math.Min(partSize.Height + overlap, size.Height - realStart.Y));
-                    if ( x > 0 && x + partSize.Width < size.Width)
-                    {
-                        realPartSize.Width += overlap;
-                    }
-                    if (y > 0 && y + partSize.Height < size.Height)
-                    {
-                        realPartSize.Height += overlap;
-                    }
-                    parts.Add(new HugeImagePart<TPixel>(new Rectangle(start, partSizeAdjusted), new Rectangle(realStart, realPartSize),  parts.Count + 1, this));
-                }
-            }
-            return parts;
-        }
-
-        internal static int GetPartSize(double size, double maxSize)
-        {
-            return (int)Math.Ceiling(size / Math.Ceiling(size / maxSize));
         }
 
         /// <summary>
