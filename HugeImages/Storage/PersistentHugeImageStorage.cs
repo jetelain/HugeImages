@@ -13,7 +13,7 @@
             this.basePath = basePath;
         }
 
-        public IHugeImageStorageSlot CreateSlot(string name, HugeImageSettings settings)
+        public IHugeImageStorageSlot CreateSlot(string name, HugeImageSettingsBase settings)
         {
             return new PersistentHugeImageStorageSlot(Path.Combine(basePath, name), settings);
         }

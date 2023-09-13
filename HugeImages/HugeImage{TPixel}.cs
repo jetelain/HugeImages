@@ -29,15 +29,15 @@ namespace HugeImages
         }
 
         public HugeImage(IHugeImageStorage storage, string name, Size size, HugeImageSettings settings, TPixel background = default)
-            : this(storage.CreateSlot(name, settings), size, settings, background)
+            : this(storage.CreateSlot(name, settings), size, settings, settings, background)
         {
         }
 
-        public HugeImage(IHugeImageStorageSlot slot, Size size, HugeImageSettingsBase settings, TPixel background)
+        public HugeImage(IHugeImageStorageSlot slot, Size size, HugeImageSettingsBase settings, IHugeImagePartitioner partitioner, TPixel background)
         {
             this.slot = slot;
             this.size = size;
-            this.parts = settings.CreateParts(size).Select((def, index) => new HugeImagePart<TPixel>(def.Rectangle, def.RealRectangle, def.PartId ?? (index + 1), this)).ToList();
+            this.parts = partitioner.CreateParts(size).Select((def, index) => new HugeImagePart<TPixel>(def.Rectangle, def.RealRectangle, def.PartId ?? (index + 1), this)).ToList();
             this.maxLoadedParts = Math.Min(parts.Count, ComputeMaxLoadedParts(settings.MemoryLimit, parts.Max(p => p.RealRectangle.Width), parts.Max(p => p.RealRectangle.Height)));
             Configuration = settings.Configuration;
             Background = background;

@@ -16,7 +16,7 @@ namespace HugeImages.Test
 
         internal int WriteCalls => writeCalls;
 
-        public IHugeImageStorageSlot CreateSlot(string name, HugeImageSettings settings)
+        public IHugeImageStorageSlot CreateSlot(string name, HugeImageSettingsBase settings)
         {
             return this;
         }

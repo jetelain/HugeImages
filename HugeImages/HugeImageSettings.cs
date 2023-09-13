@@ -1,10 +1,8 @@
 ﻿using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats;
-using SixLabors.ImageSharp.Formats.Png;
 
 namespace HugeImages
 {
-    public class HugeImageSettings : HugeImageSettingsBase
+    public class HugeImageSettings : HugeImageSettingsBase, IHugeImagePartitioner
     {
         /// <summary>
         /// Default value for <see cref="PartMaxSize"/>.
@@ -42,13 +40,8 @@ namespace HugeImages
         /// </summary>
         public int PartOverlap { get; set; } = DefaultPartOverlap;
 
-        /// <summary>
-        /// Image format to use for mass storage
-        /// </summary>
-        public IImageFormat StorageFormat { get; set; } = PngFormat.Instance;
-
         /// <inheritdoc />
-        public override List<HugeImagePartDefinition> CreateParts(Size size)
+        public List<HugeImagePartDefinition> CreateParts(Size size)
         {
             ValidateSettings();
 

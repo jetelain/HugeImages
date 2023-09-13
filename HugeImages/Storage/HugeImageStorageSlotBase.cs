@@ -11,7 +11,7 @@ namespace HugeImages.Storage
         private readonly IImageEncoder encoder;
         private readonly IImageDecoder decoder;
 
-        public HugeImageStorageSlotBase(string path, HugeImageSettings settings)
+        public HugeImageStorageSlotBase(string path, HugeImageSettingsBase settings)
             : this(path, settings.Configuration, settings.StorageFormat)
         {
 

@@ -1,8 +1,10 @@
 ﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Png;
 
 namespace HugeImages
 {
-    public abstract class HugeImageSettingsBase
+    public class HugeImageSettingsBase
     {        
         /// <summary>
         /// Default value for <see cref="MemoryLimit"/>.
@@ -22,10 +24,8 @@ namespace HugeImages
         public Configuration Configuration { get; set; } = Configuration.Default;
 
         /// <summary>
-        /// Describes how to split an HugeImage in parts based on it's size
+        /// Image format to use for mass storage
         /// </summary>
-        /// <param name="size">Size of the image</param>
-        /// <returns></returns>
-        public abstract List<HugeImagePartDefinition> CreateParts(Size size);
+        public IImageFormat StorageFormat { get; set; } = PngFormat.Instance;
     }
 }

@@ -4,7 +4,7 @@
     {
         private readonly string basePath = Path.Combine(Path.GetTempPath(), "HugeImages", Guid.NewGuid().ToString());
 
-        public IHugeImageStorageSlot CreateSlot(string name, HugeImageSettings settings)
+        public IHugeImageStorageSlot CreateSlot(string name, HugeImageSettingsBase settings)
         {
             return new TemporaryHugeImageStorageSlot(Path.Combine(basePath, name), settings);
         }

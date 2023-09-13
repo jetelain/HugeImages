@@ -2,6 +2,6 @@
 {
     public interface IHugeImageStorage
     {
-        IHugeImageStorageSlot CreateSlot(string name, HugeImageSettings settings);
+        IHugeImageStorageSlot CreateSlot(string name, HugeImageSettingsBase settings);
     }
 }

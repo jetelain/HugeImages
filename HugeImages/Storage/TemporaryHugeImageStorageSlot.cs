@@ -2,7 +2,7 @@
 {
     internal class TemporaryHugeImageStorageSlot : HugeImageStorageSlotBase
     {
-        public TemporaryHugeImageStorageSlot(string path, HugeImageSettings settings) : base(path, settings)
+        public TemporaryHugeImageStorageSlot(string path, HugeImageSettingsBase settings) : base(path, settings)
         {
 
         }

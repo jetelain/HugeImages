@@ -2,7 +2,7 @@
 {
     internal class PersistentHugeImageStorageSlot : HugeImageStorageSlotBase
     {
-        public PersistentHugeImageStorageSlot(string path, HugeImageSettings settings) : base(path, settings)
+        public PersistentHugeImageStorageSlot(string path, HugeImageSettingsBase settings) : base(path, settings)
         {
 
         }
