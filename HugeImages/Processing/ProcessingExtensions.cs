@@ -164,7 +164,7 @@ namespace HugeImages.Processing
         public static Task MutateAsync<TPixel>(this Image<TPixel> image, Func<IImageProcessingContext,ValueTask> asyncOperation)
             where TPixel : unmanaged, IPixel<TPixel>
         {
-            return MutateAsync(image, image.GetConfiguration(), asyncOperation);
+            return MutateAsync(image, image.Configuration, asyncOperation);
         }
 
         public static async Task MutateAsync<TPixel>(this Image<TPixel> image, Configuration configuration, Func<IImageProcessingContext, ValueTask> asyncOperation)

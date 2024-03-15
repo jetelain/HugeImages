@@ -76,9 +76,9 @@ public static class ImageComparerExtensions
         where TPixelA : unmanaged, IPixel<TPixelA>
         where TPixelB : unmanaged, IPixel<TPixelB>
     {
-        if (expected.Size() != actual.Size())
+        if (expected.Size != actual.Size)
         {
-            throw new ImageDimensionsMismatchException(expected.Size(), actual.Size());
+            throw new ImageDimensionsMismatchException(expected.Size, actual.Size);
         }
 
         if (expected.Frames.Count != actual.Frames.Count)
@@ -103,7 +103,7 @@ public static class ImageComparerExtensions
     {
         if (expected.Size != actual.Size)
         {
-            throw new ImageDimensionsMismatchException(expected.Size(), actual.Size());
+            throw new ImageDimensionsMismatchException(expected.Size, actual.Size);
         }
 
         if (expected.Frames.Count != actual.Frames.Count)

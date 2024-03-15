@@ -10,9 +10,9 @@ namespace HugeImages.Storage
         public static HugeImage<TPixel> FromUnique<TPixel>(Image<TPixel> image, string extension = ".png")
             where TPixel : unmanaged, IPixel<TPixel>
         {
-            var settings = new HugeImageSettingsBase() { Configuration = image.GetConfiguration() };
+            var settings = new HugeImageSettingsBase() { Configuration = image.Configuration };
 
-            return new HugeImage<TPixel>(new TemporaryUniqueImageStorageSlot(extension, image, settings), image.Size(), settings, new UniqueImagePartitioner(), default);
+            return new HugeImage<TPixel>(new TemporaryUniqueImageStorageSlot(extension, image, settings), image.Size, settings, new UniqueImagePartitioner(), default);
         }
 
         public static async Task<HugeImage<TPixel>> LoadUniqueAsync<TPixel>(string path)
@@ -28,9 +28,9 @@ namespace HugeImages.Storage
         {
             var image = await Image.LoadAsync(path).ConfigureAwait(false);
 
-            var settings = new HugeImageSettingsBase() { Configuration = image.GetConfiguration() };
+            var settings = new HugeImageSettingsBase() { Configuration = image.Configuration };
 
-            return new HugeImage<TPixel>(new PersistentUniqueImageStorageSlot(path, image, settings), image.Size(), settings, new UniqueImagePartitioner(), default);
+            return new HugeImage<TPixel>(new PersistentUniqueImageStorageSlot(path, image, settings), image.Size, settings, new UniqueImagePartitioner(), default);
         }
 
         public static async Task SaveUniqueAsync<TPixel>(this HugeImage<TPixel> himage, string path)

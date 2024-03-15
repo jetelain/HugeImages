@@ -34,7 +34,7 @@ namespace HugeImages.Processing.Buffer
             }
             if (processor is DrawImageProcessor drawImage)
             {
-                return Rectangle.Intersect(new Rectangle(drawImage.Location, drawImage.Image.Size()), rectangle);
+                return Rectangle.Intersect(new Rectangle(drawImage.BackgroundLocation, drawImage.ForeGround.Size), rectangle);
             }
             return rectangle;
         }

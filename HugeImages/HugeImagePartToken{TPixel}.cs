@@ -50,7 +50,7 @@ namespace HugeImages
 
         internal IImageProcessingContext CreateProcessingContext()
         {
-            return new ImagePartProcessingContext<TPixel>(GetImageReadWrite(), parent.RealRectangle, parent.Parent.Size, image.GetConfiguration());
+            return new ImagePartProcessingContext<TPixel>(GetImageReadWrite(), parent.RealRectangle, parent.Parent.Size, image.Configuration);
         }
 
         /// <summary>

@@ -74,10 +74,10 @@ namespace HugeImages.Processing
             if (processor is DrawImageProcessor drawImage)
             {
                 // DrawImage fails if bounds does not match (whereas FillPathProcessor/DrawPathProcessor silently ignore call)
-                var realLocation = TransformPoint(drawImage.Location);
-                if (new Rectangle(realLocation, drawImage.Image.Size()).IntersectsWith(realRectangle))
+                var realLocation = TransformPoint(drawImage.BackgroundLocation);
+                if (new Rectangle(realLocation, drawImage.ForeGround.Size).IntersectsWith(realRectangle))
                 {
-                    return new DrawImageProcessor(drawImage.Image, realLocation, drawImage.ColorBlendingMode, drawImage.AlphaCompositionMode, drawImage.Opacity);
+                    return new DrawImageProcessor(drawImage.ForeGround, realLocation, drawImage.ColorBlendingMode, drawImage.AlphaCompositionMode, drawImage.Opacity);
                 }
                 return null;
             }

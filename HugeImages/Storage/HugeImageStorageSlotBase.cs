@@ -21,8 +21,8 @@ namespace HugeImages.Storage
         {
             this.path = path;
             extension = "." + format.FileExtensions.First();
-            encoder = configuration.ImageFormatsManager.FindEncoder(format);
-            decoder = configuration.ImageFormatsManager.FindDecoder(format);
+            encoder = configuration.ImageFormatsManager.GetEncoder(format);
+            decoder = configuration.ImageFormatsManager.GetDecoder(format);
             Directory.CreateDirectory(path);
         }
 
@@ -33,7 +33,7 @@ namespace HugeImages.Storage
             var file = Path.Combine(path, partId + extension);
             if (File.Exists(file))
             {
-                return await Image.LoadAsync<TPixel>(file, decoder);
+                return await Image.LoadAsync<TPixel>(file); // TODO: decoder
             }
             return null;
         }
@@ -41,7 +41,7 @@ namespace HugeImages.Storage
         public Task SaveImagePart<TPixel>(int partId, Image<TPixel> partImage) where TPixel : unmanaged, IPixel<TPixel>
         {
             var file = Path.Combine(path, partId + extension);
-            return partImage.SaveAsync(file, encoder);
+            return partImage.SaveAsync(file); // TODO: encoder
         }
     }
 }
