@@ -65,7 +65,7 @@ namespace HugeImages.Storage
             where TPixel : unmanaged, IPixel<TPixel>
         {
             var clone = new HugeImage<TPixel>(storage, himage.Size, settings);
-            await clone.MutateAllAsync((d) => d.DrawHugeImageAsync(himage, Point.Empty, 1)).ConfigureAwait(false);
+            await clone.MutateAllAsync(async (d) => await d.DrawHugeImageAsync(himage, Point.Empty, 1).ConfigureAwait(false)).ConfigureAwait(false);
             return clone;
         }
 
@@ -73,7 +73,7 @@ namespace HugeImages.Storage
             where TPixel : unmanaged, IPixel<TPixel>
         {
             var clone = new HugeImage<TPixel>(storage, name, himage.Size, settings ?? new HugeImageSettings());
-            await clone.MutateAllAsync((d) => d.DrawHugeImageAsync(himage, Point.Empty, 1)).ConfigureAwait(false);
+            await clone.MutateAllAsync(async (d) => await d.DrawHugeImageAsync(himage, Point.Empty, 1).ConfigureAwait(false)).ConfigureAwait(false);
             return clone;
         }
     }
