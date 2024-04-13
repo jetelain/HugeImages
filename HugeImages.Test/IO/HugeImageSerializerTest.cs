@@ -30,7 +30,7 @@ namespace HugeImages.Test.IO
 
             var mem = new MemoryStream();
             await HugeImageSerializer<Rgb24>.Save(image, mem);
-            mem.Seek(0, SeekOrigin.Begin);
+            mem.Position = 0;
 
             Assert.Equal(0, storage1.WriteCalls);
 
@@ -60,7 +60,7 @@ namespace HugeImages.Test.IO
 
             var mem = new MemoryStream();
             await HugeImageSerializer<Rgb24>.Save(image, mem);
-            mem.Seek(0, SeekOrigin.Begin);
+            mem.Position = 0;
 
             Assert.Equal(4, storage1.WriteCalls);
 
@@ -82,7 +82,7 @@ namespace HugeImages.Test.IO
 
             var mem = new MemoryStream();
             await HugeImageSerializer<Rgb24>.Save(image, mem);
-            mem.Seek(0, SeekOrigin.Begin);
+            mem.Position = 0;
 
             Assert.Equal(4, storage1.CopyCalls);
             Assert.Equal(4, storage1.WriteCalls);
@@ -116,7 +116,7 @@ namespace HugeImages.Test.IO
 
             var mem = new MemoryStream();
             await HugeImageSerializer<Rgb24>.Save(image, mem);
-            mem.Seek(0, SeekOrigin.Begin);
+            mem.Position = 0;
 
             Assert.Equal(4, storage1.CopyCalls);
             Assert.Equal(4, storage1.WriteCalls);

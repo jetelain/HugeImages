@@ -28,7 +28,7 @@ namespace HugeImages.Test.IO
 
             var mem = new MemoryStream();
             await image.SaveAsync(mem);
-            mem.Seek(0, SeekOrigin.Begin);
+            mem.Position = 0;
 
             await image.OffloadAsync();
 

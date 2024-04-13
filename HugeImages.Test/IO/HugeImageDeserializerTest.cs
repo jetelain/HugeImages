@@ -70,7 +70,7 @@ namespace HugeImages.Test.IO
             await image.OffloadAsync();
             var mem = new MemoryStream();
             await HugeImageSerializer<Rgb24>.Save(image, mem);
-            mem.Seek(0, SeekOrigin.Begin);
+            mem.Position = 0;
             return mem;
         }
     }

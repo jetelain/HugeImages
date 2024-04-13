@@ -30,7 +30,7 @@ namespace HugeImages.Test
                 {
                     var mem = new MemoryStream();
                     await other.CopyImagePartTo(id, mem);
-                    mem.Seek(0, SeekOrigin.Begin);
+                    mem.Position = 0;
                     Storage[id] = PngDecoder.Instance.Decode<Rgb24>(new DecoderOptions(), mem);
 
                     copyFromCalls++;
