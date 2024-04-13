@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HugeImages", "HugeImages\Hu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HugeImages.Test", "HugeImages.Test\HugeImages.Test.csproj", "{46DC21DF-EEB7-4CB4-9BCF-4D9735CCFD15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApp", "DemoApp\DemoApp.csproj", "{8FB1CB74-6616-4E44-AB99-B583868E1A1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemoApp", "DemoApp\DemoApp.csproj", "{8FB1CB74-6616-4E44-AB99-B583868E1A1B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Éléments de solution", "Éléments de solution", "{CD339A26-973D-4075-9CA4-AE05E902C74F}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet-linux.yml = .github\workflows\dotnet-linux.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
