@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Text.Json;
+using HugeImages.IO.Json;
 using HugeImages.Storage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -35,7 +36,7 @@ namespace HugeImages.IO
             using (var zipStream = entry.Open())
             {
                 var index = CreateIndex(himg, extension);
-                await JsonSerializer.SerializeAsync(zipStream, index).ConfigureAwait(false);
+                await JsonSerializer.SerializeAsync(zipStream, index, HugeImageIndexContext.Default.HugeImageIndex).ConfigureAwait(false);
             }
 
             return entry;

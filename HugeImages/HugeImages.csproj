@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<IsAotCompatible>true</IsAotCompatible>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -11,7 +12,6 @@
 			<_Parameter1>$(AssemblyName).Test</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
-
 
 	<ItemGroup>
 		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.3" />

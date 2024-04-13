@@ -8,7 +8,7 @@ namespace HugeImages.IO.Json
     {
         public override Size Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var array = JsonSerializer.Deserialize<int[]>(ref reader)!;
+            var array = JsonSerializer.Deserialize<int[]>(ref reader, HugeImageIndexContext.Default.Int32Array)!;
             return new Size(array[0], array[1]);
         }
 

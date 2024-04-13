@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Text.Json;
+using HugeImages.IO.Json;
 using HugeImages.Storage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -55,7 +56,7 @@ namespace HugeImages.IO
                 throw new IOException($"index.json is missing.");
             }
             using var stream = indexEntry.Open();
-            var data = await JsonSerializer.DeserializeAsync<HugeImageIndex>(stream).ConfigureAwait(false);
+            var data = await JsonSerializer.DeserializeAsync<HugeImageIndex>(stream, HugeImageIndexContext.Default.HugeImageIndex).ConfigureAwait(false);
             if ( data == null)
             {
                 throw new IOException($"index.json is corrupted.");
