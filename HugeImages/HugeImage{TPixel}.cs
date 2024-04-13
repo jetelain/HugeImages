@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using HugeImages.Storage;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace HugeImages
@@ -41,6 +42,7 @@ namespace HugeImages
             this.maxLoadedParts = Math.Min(parts.Count, ComputeMaxLoadedParts(settings.MemoryLimit, parts.Max(p => p.RealRectangle.Width), parts.Max(p => p.RealRectangle.Height)));
             Configuration = settings.Configuration;
             Background = background;
+            StorageFormat = settings.StorageFormat;
             AcquiredParts = new SemaphoreSlim(maxLoadedParts, maxLoadedParts);
             LoadedParts = new SemaphoreSlim(maxLoadedParts, maxLoadedParts);
         }
@@ -79,11 +81,15 @@ namespace HugeImages
 
         internal TPixel Background { get; }
 
+        internal IImageFormat StorageFormat { get; }
+
         internal SemaphoreSlim AcquiredParts { get; }
 
         internal SemaphoreSlim LoadedParts { get; }
 
         IEnumerable<IHugeImagePart> IHugeImage.Parts => Parts;
+
+        internal IHugeImageStorageSlot Slot => slot;
 
         /// <summary>
         /// Free memory to load one ore more parts
@@ -139,11 +145,6 @@ namespace HugeImages
             } while (!await LoadedParts.WaitAsync(500).ConfigureAwait(false));
 
             return await slot.LoadImagePart<TPixel>(partId).ConfigureAwait(false);
-        }
-
-        internal Task SaveImagePart(int partId, Image<TPixel> image)
-        {
-            return slot.SaveImagePart(partId, image);
         }
     }
 }

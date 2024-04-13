@@ -1,10 +1,10 @@
 ﻿namespace HugeImages.Storage
 {
-    public sealed class TemporaryHugeImageStorage : IHugeImageStorage, IDisposable
+    public sealed class TemporaryHugeImageStorage : HugeImageStorageBase, IHugeImageStorage, IDisposable
     {
         private readonly string basePath = Path.Combine(Path.GetTempPath(), "HugeImages", Guid.NewGuid().ToString());
 
-        public IHugeImageStorageSlot CreateSlot(string name, HugeImageSettingsBase settings)
+        internal override HugeImageStorageSlotBase CreateSlot(string name, HugeImageSettingsBase settings)
         {
             return new TemporaryHugeImageStorageSlot(Path.Combine(basePath, name), settings);
         }

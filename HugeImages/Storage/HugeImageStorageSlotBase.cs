@@ -4,7 +4,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace HugeImages.Storage
 {
-    internal abstract class HugeImageStorageSlotBase : IHugeImageStorageSlot
+    internal abstract class HugeImageStorageSlotBase : IHugeImageStorageSlot, IHugeImageStorageSlotCopySource
     {
         protected readonly string path;
         private readonly string extension;
@@ -26,7 +26,19 @@ namespace HugeImages.Storage
             Directory.CreateDirectory(path);
         }
 
+        public async Task CopyImagePartTo(int partId, Stream target)
+        {
+            var file = Path.Combine(path, partId + extension);
+            using var fstream = File.OpenRead(file);
+            await fstream.CopyToAsync(target);
+        }
+
         public abstract void Dispose();
+
+        public bool ImagePartExists(int partId)
+        {
+            return File.Exists(Path.Combine(path, partId + extension));
+        }
 
         public async Task<Image<TPixel>?> LoadImagePart<TPixel>(int partId) where TPixel : unmanaged, IPixel<TPixel>
         {
@@ -42,6 +54,18 @@ namespace HugeImages.Storage
         {
             var file = Path.Combine(path, partId + extension);
             return partImage.SaveAsync(file); // TODO: encoder
+        }
+
+        public async Task CopyFrom(IHugeImageStorageSlotCopySource other, IEnumerable<int> partIds)
+        {
+            foreach(var partId in partIds)
+            {
+                if (other.ImagePartExists(partId))
+                {
+                    using var target = File.Create(Path.Combine(path, partId + extension));
+                    await other.CopyImagePartTo(partId, target);
+                }
+            }
         }
     }
 }

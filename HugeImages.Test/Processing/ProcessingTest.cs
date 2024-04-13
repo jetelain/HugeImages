@@ -1,10 +1,7 @@
 ﻿using HugeImages.Processing;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing;
-using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Tests.TestUtilities.ImageComparison;
 
 namespace HugeImages.Test.Processing
 {

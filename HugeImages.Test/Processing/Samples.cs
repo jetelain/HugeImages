@@ -9,6 +9,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Tests.TestUtilities.ImageComparison;
+using HugeImages.Processing;
 
 namespace HugeImages.Test.Processing
 {
@@ -34,6 +35,17 @@ namespace HugeImages.Test.Processing
                 await expected.SaveAsPngAsync(@"c:\temp\expected.png");
                 throw;
             }
+        }
+
+        public static async Task AssertBasicDrawing(HugeImage<Rgb24> image)
+        {
+            using var expected = new Image<Rgb24>(1000, 1000);
+            expected.Mutate(d =>
+            {
+                BasicDrawing(d);
+            });
+            using var full = await image.ToScaledImageAsync(1000, 1000);
+            await AssertEqual(expected, full);
         }
     }
 }
