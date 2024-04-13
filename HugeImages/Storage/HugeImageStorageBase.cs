@@ -1,8 +1,8 @@
 ﻿namespace HugeImages.Storage
 {
-    public abstract class HugeImageStorageBase : IHugeImageStorage
+    public abstract class HugeImageStorageBase : IHugeImageStorage, IHugeImageStorageCanCopy
     {
-        internal async Task<IHugeImageStorageSlot> CreateCopyFrom(string name, HugeImageSettingsBase settings, IHugeImageStorageSlotCopyable other, IEnumerable<int> partIds)
+        public async Task<IHugeImageStorageSlot> CreateCopyFrom(string name, HugeImageSettingsBase settings, IHugeImageStorageSlotCopySource other, IEnumerable<int> partIds)
         {
             var slot = CreateSlot(name, settings);
             await slot.CopyFrom(other, partIds);

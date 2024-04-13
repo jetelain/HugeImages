@@ -1,6 +1,6 @@
 ﻿namespace HugeImages.Storage
 {
-    public interface IHugeImageStorageSlotCopyable : IHugeImageStorageSlot
+    public interface IHugeImageStorageSlotCopySource : IHugeImageStorageSlot
     {
         bool ImagePartExists(int partId);
 

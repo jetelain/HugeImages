@@ -21,12 +21,7 @@ namespace HugeImages.IO
             return CreateImage(index, settings, slot);
         }
 
-        private static HugeImage<TPixel> CreateImage(HugeImageIndex index, HugeImageSettingsBase settings, IHugeImageStorageSlot slot)
-        {
-            return new HugeImage<TPixel>(slot, index.Size, settings, index, index.Background.ToPixel<TPixel>());
-        }
-
-        internal static async Task<HugeImage<TPixel>> LoadCopy(Stream stream, HugeImageStorageBase storage, string name, HugeImageSettingsBase? settingsBase)
+        internal static async Task<HugeImage<TPixel>> LoadCopy(Stream stream, IHugeImageStorageCanCopy storage, string name, HugeImageSettingsBase? settingsBase)
         {
             var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
             var index = await ReadIndex(archive).ConfigureAwait(false);
@@ -34,6 +29,11 @@ namespace HugeImages.IO
             var slot = await storage.CreateCopyFrom(name, settings, new ReadOnlyZipStorageSlot(archive, index, settings), index.Parts.Select(p => p.PartId)).ConfigureAwait(false);
 
             return CreateImage(index, settings, slot);
+        }
+
+        private static HugeImage<TPixel> CreateImage(HugeImageIndex index, HugeImageSettingsBase settings, IHugeImageStorageSlot slot)
+        {
+            return new HugeImage<TPixel>(slot, index.Size, settings, index, index.Background.ToPixel<TPixel>());
         }
 
         private static HugeImageSettingsBase CreateSettings(HugeImageIndex index, HugeImageSettingsBase? settingsBase)

@@ -18,7 +18,7 @@ namespace HugeImages.IO
 
                 await WriteIndex(himg, archive, extension).ConfigureAwait(false);
 
-                var copyableSlot = himg.Slot as IHugeImageStorageSlotCopyable;
+                var copyableSlot = himg.Slot as IHugeImageStorageSlotCopySource;
                 if (copyableSlot != null)
                 {
                     await WritePartsFromCopyable(himg, archive, extension, copyableSlot).ConfigureAwait(false);
@@ -65,16 +65,16 @@ namespace HugeImages.IO
             }
         }
 
-        private static async Task WritePartsFromCopyable(HugeImage<TPixel> himg, ZipArchive archive, string extension, IHugeImageStorageSlotCopyable fSlot)
+        private static async Task WritePartsFromCopyable(HugeImage<TPixel> himg, ZipArchive archive, string extension, IHugeImageStorageSlotCopySource copyableSlot)
         {
             foreach (var part in himg.Parts)
             {
-                if (fSlot.ImagePartExists(part.PartId))
+                if (part.HasChanged || copyableSlot.ImagePartExists(part.PartId))
                 {
                     var entry = archive.CreateEntry($"{part.PartId}.{extension}", CompressionLevel.NoCompression);
                     using (var zipStream = entry.Open())
                     {
-                        await part.SaveFromSlot(zipStream, fSlot).ConfigureAwait(false);
+                        await part.SaveFromSlot(zipStream, copyableSlot).ConfigureAwait(false);
                     }
                 }
             }

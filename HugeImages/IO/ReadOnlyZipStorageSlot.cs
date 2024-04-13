@@ -6,7 +6,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace HugeImages.IO
 {
-    internal sealed class ReadOnlyZipStorageSlot : IHugeImageStorageSlot, IHugeImageStorageSlotCopyable
+    internal sealed class ReadOnlyZipStorageSlot : IHugeImageStorageSlot, IHugeImageStorageSlotCopySource
     {
         private readonly ZipArchive archive;
         private readonly HugeImageIndex index;

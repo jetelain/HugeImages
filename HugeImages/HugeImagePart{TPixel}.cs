@@ -144,7 +144,7 @@ namespace HugeImages
 
         public int PartId => partId;
 
-        internal async Task SaveFromSlot(Stream stream, IHugeImageStorageSlotCopyable copyableSlot)
+        internal async Task SaveFromSlot(Stream stream, IHugeImageStorageSlotCopySource copyableSlot)
         {
             if (copyableSlot != parent.Slot)
             {
@@ -157,17 +157,13 @@ namespace HugeImages
                 {
                     throw new InvalidOperationException("This part is still acquired.");
                 }
-                // Optimized path : avoid loading all images
                 if (image != null && HasChanged)
                 {
                     // Image has changes since last save, but we do not want to Offload
                     HasChanged = false;
                     await copyableSlot.SaveImagePart(partId, image).ConfigureAwait(false);
                 }
-                if (copyableSlot.ImagePartExists(partId))
-                {
-                    await copyableSlot.CopyImagePartTo(partId, stream);
-                }
+                await copyableSlot.CopyImagePartTo(partId, stream).ConfigureAwait(false);
             }
             finally
             {

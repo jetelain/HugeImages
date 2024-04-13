@@ -4,7 +4,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace HugeImages.Storage
 {
-    internal abstract class HugeImageStorageSlotBase : IHugeImageStorageSlot, IHugeImageStorageSlotCopyable
+    internal abstract class HugeImageStorageSlotBase : IHugeImageStorageSlot, IHugeImageStorageSlotCopySource
     {
         protected readonly string path;
         private readonly string extension;
@@ -56,7 +56,7 @@ namespace HugeImages.Storage
             return partImage.SaveAsync(file); // TODO: encoder
         }
 
-        internal async Task CopyFrom(IHugeImageStorageSlotCopyable other, IEnumerable<int> partIds)
+        public async Task CopyFrom(IHugeImageStorageSlotCopySource other, IEnumerable<int> partIds)
         {
             foreach(var partId in partIds)
             {
