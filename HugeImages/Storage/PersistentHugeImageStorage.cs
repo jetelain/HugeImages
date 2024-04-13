@@ -1,6 +1,7 @@
-﻿namespace HugeImages.Storage
+﻿
+namespace HugeImages.Storage
 {
-    public sealed class PersistentHugeImageStorage : IHugeImageStorage, IDisposable
+    public sealed class PersistentHugeImageStorage : HugeImageStorageBase, IHugeImageStorage, IDisposable
     {
         private readonly string basePath;
 
@@ -13,7 +14,7 @@
             this.basePath = basePath;
         }
 
-        public IHugeImageStorageSlot CreateSlot(string name, HugeImageSettingsBase settings)
+        internal override HugeImageStorageSlotBase CreateSlot(string name, HugeImageSettingsBase settings)
         {
             return new PersistentHugeImageStorageSlot(Path.Combine(basePath, name), settings);
         }

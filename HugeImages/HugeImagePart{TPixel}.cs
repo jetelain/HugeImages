@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using HugeImages.Storage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -85,7 +86,7 @@ namespace HugeImages
                     if (HasChanged)
                     {
                         HasChanged = false;
-                        await parent.SaveImagePart(partId, image).ConfigureAwait(false);
+                        await parent.Slot.SaveImagePart(partId, image).ConfigureAwait(false);
                     }
                     image.Dispose();
                     parent.LoadedParts.Release();
@@ -138,6 +139,39 @@ namespace HugeImages
             {
                 // we release the right to lock an image
                 parent.AcquiredParts.Release();
+            }
+        }
+
+        public int PartId => partId;
+
+        internal async Task SaveFromSlot(Stream stream, IHugeImageStorageSlotCopyable copyableSlot)
+        {
+            if (copyableSlot != parent.Slot)
+            {
+                throw new ArgumentException();
+            }
+            await locker.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                if (acquired != 0)
+                {
+                    throw new InvalidOperationException("This part is still acquired.");
+                }
+                // Optimized path : avoid loading all images
+                if (image != null && HasChanged)
+                {
+                    // Image has changes since last save, but we do not want to Offload
+                    HasChanged = false;
+                    await copyableSlot.SaveImagePart(partId, image).ConfigureAwait(false);
+                }
+                if (copyableSlot.ImagePartExists(partId))
+                {
+                    await copyableSlot.CopyImagePartTo(partId, stream);
+                }
+            }
+            finally
+            {
+                locker.Release();
             }
         }
     }
