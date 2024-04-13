@@ -35,5 +35,44 @@ namespace HugeImages.Test.IO
             await IOHelper.CheckSampleImage(storage1, mem);
         }
 
+        [Fact]
+        public async Task LoadReadOnlyLockedAsync()
+        {
+            var storage1 = new HugeImageStorageMock();
+
+            var stream = await HugeImageDeserializerTest.CreateBasicDrawing(storage1);
+
+            var himg2 = await HugeImageIO.LoadReadOnlyLockedAsync<Rgb24>(stream, null);
+
+            await Samples.AssertBasicDrawing(himg2);
+        }
+
+        [Fact]
+        public async Task LoadCopyAsync()
+        {
+            var storage1 = new HugeImageStorageMock();
+
+            var stream = await HugeImageDeserializerTest.CreateBasicDrawing(storage1);
+
+            var storage2 = new HugeImageStorageMock();
+
+            var himg2 = await HugeImageIO.LoadCopyAsync<Rgb24>(stream, storage2, "unused", null);
+
+            await Samples.AssertBasicDrawing(himg2);
+        }
+
+        [Fact]
+        public async Task LoadCloneAsync()
+        {
+            var storage1 = new HugeImageStorageMock();
+
+            var stream = await HugeImageDeserializerTest.CreateBasicDrawing(storage1);
+
+            var storage2 = new HugeImageStorageMock();
+
+            var himg2 = await HugeImageIO.LoadCloneAsync<Rgb24>(stream, storage2, "unused", null);
+
+            await Samples.AssertBasicDrawing(himg2);
+        }
     }
 }

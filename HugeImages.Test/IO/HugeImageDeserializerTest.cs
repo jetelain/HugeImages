@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HugeImages.IO;
+﻿using HugeImages.IO;
 using HugeImages.Processing;
 using HugeImages.Test.Processing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace HugeImages.Test.IO
 {
@@ -60,7 +54,7 @@ namespace HugeImages.Test.IO
             Assert.Equal(4, storage2.WriteCalls);
         }
 
-        private static async Task<MemoryStream> CreateBasicDrawing(HugeImageStorageMock storage1)
+        internal static async Task<MemoryStream> CreateBasicDrawing(HugeImageStorageMock storage1)
         {
             using var image = new HugeImage<Rgb24>(storage1, "unused", new Size(1000, 1000), new HugeImageSettings() { PartMaxSize = 512, PartOverlap = 6 });
             await image.MutateAllAsync(d =>
