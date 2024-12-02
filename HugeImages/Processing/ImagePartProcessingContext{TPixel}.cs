@@ -8,7 +8,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors;
 using SixLabors.ImageSharp.Processing.Processors.Drawing;
 
-namespace HugeImages.Processing
+namespace Pmad.HugeImages.Processing
 {
     internal class ImagePartProcessingContext<TPixel> : IImageProcessingContext, IHugeImageProcessingContext
         where TPixel : unmanaged, IPixel<TPixel>

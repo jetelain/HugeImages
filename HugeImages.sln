@@ -3,14 +3,16 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33717.318
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HugeImages", "HugeImages\HugeImages.csproj", "{EC390D20-B448-46A3-9CDE-A36F076F9E4C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pmad.HugeImages", "HugeImages\Pmad.HugeImages.csproj", "{EC390D20-B448-46A3-9CDE-A36F076F9E4C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HugeImages.Test", "HugeImages.Test\HugeImages.Test.csproj", "{46DC21DF-EEB7-4CB4-9BCF-4D9735CCFD15}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pmad.HugeImages.Test", "HugeImages.Test\Pmad.HugeImages.Test.csproj", "{46DC21DF-EEB7-4CB4-9BCF-4D9735CCFD15}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DemoApp", "DemoApp\DemoApp.csproj", "{8FB1CB74-6616-4E44-AB99-B583868E1A1B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoApp", "DemoApp\DemoApp.csproj", "{8FB1CB74-6616-4E44-AB99-B583868E1A1B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Éléments de solution", "Éléments de solution", "{CD339A26-973D-4075-9CA4-AE05E902C74F}"
 	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnet-linux-pr.yml = .github\workflows\dotnet-linux-pr.yml
+		.github\workflows\dotnet-linux-pub.yml = .github\workflows\dotnet-linux-pub.yml
 		.github\workflows\dotnet-linux.yml = .github\workflows\dotnet-linux.yml
 	EndProjectSection
 EndProject

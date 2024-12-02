@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
-using HugeImages.IO.Json;
+using Pmad.HugeImages.IO.Json;
 using SixLabors.ImageSharp;
 
-namespace HugeImages.IO
+namespace Pmad.HugeImages.IO
 {
     public sealed class HugeImageIndexPart
     {

@@ -4,11 +4,11 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HugeImages.Test.Processing;
+using Pmad.HugeImages.Test.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp;
 
-namespace HugeImages.Test.IO
+namespace Pmad.HugeImages.Test.IO
 {
     internal class IOHelper
     {

@@ -1,6 +1,6 @@
 ﻿using SixLabors.ImageSharp;
 
-namespace HugeImages.Storage
+namespace Pmad.HugeImages.Storage
 {
     internal sealed class PersistentUniqueImageStorageSlot : UniqueImageStorageSlotBase
     {

@@ -1,6 +1,6 @@
 ﻿using SixLabors.ImageSharp;
 
-namespace HugeImages
+namespace Pmad.HugeImages
 {
     public class HugeImageSettings : HugeImageSettingsBase, IHugeImagePartitioner
     {

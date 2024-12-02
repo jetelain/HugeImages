@@ -1,5 +1,5 @@
 ﻿
-namespace HugeImages.Storage
+namespace Pmad.HugeImages.Storage
 {
     public sealed class PersistentHugeImageStorage : HugeImageStorageBase, IHugeImageStorage, IDisposable
     {

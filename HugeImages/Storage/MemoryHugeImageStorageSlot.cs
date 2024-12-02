@@ -2,7 +2,7 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace HugeImages.Storage
+namespace Pmad.HugeImages.Storage
 {
     /// <summary>
     /// In-Memory slot intend for unit testing

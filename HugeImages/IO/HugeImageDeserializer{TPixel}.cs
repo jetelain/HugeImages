@@ -1,11 +1,11 @@
 ﻿using System.IO.Compression;
 using System.Text.Json;
-using HugeImages.IO.Json;
-using HugeImages.Storage;
+using Pmad.HugeImages.IO.Json;
+using Pmad.HugeImages.Storage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace HugeImages.IO
+namespace Pmad.HugeImages.IO
 {
     internal static class HugeImageDeserializer<TPixel>
         where TPixel : unmanaged, IPixel<TPixel>

@@ -1,7 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
-namespace HugeImages.Processing.Buffer
+namespace Pmad.HugeImages.Processing.Buffer
 {
     internal interface IImageProcessingOperation
     {

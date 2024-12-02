@@ -2,7 +2,7 @@
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Png;
 
-namespace HugeImages
+namespace Pmad.HugeImages
 {
     public class HugeImageSettingsBase
     {        

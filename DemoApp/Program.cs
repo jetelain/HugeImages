@@ -1,6 +1,6 @@
-﻿using HugeImages;
-using HugeImages.Processing;
-using HugeImages.Storage;
+﻿using Pmad.HugeImages;
+using Pmad.HugeImages.Processing;
+using Pmad.HugeImages.Storage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.Drawing.Processing;

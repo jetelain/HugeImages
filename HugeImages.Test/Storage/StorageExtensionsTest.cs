@@ -1,8 +1,8 @@
-﻿using HugeImages.Storage;
+﻿using Pmad.HugeImages.Storage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace HugeImages.Test.Storage
+namespace Pmad.HugeImages.Test.Storage
 {
     public class StorageExtensionsTest
     {
