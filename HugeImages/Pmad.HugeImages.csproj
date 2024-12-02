@@ -1,22 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-	<IsAotCompatible>true</IsAotCompatible>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsAotCompatible>true</IsAotCompatible>
 
-	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-	<PackageLicenseExpression>MIT</PackageLicenseExpression>
-	<PackageProjectUrl>https://github.com/jetelain/HugeImages</PackageProjectUrl>
-	<PackageReadmeFile>README.md</PackageReadmeFile>
-	<Description>Library for manipulating extremely large images with ImageSharp.</Description>
-	<IsAotCompatible>true</IsAotCompatible>
-	<PublishRepositoryUrl>true</PublishRepositoryUrl>
-	<IncludeSymbols>true</IncludeSymbols>
-	<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-	<Authors>Julien Etelain</Authors>
-  </PropertyGroup>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/jetelain/HugeImages</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<Description>Library for manipulating extremely large images with ImageSharp.</Description>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<Authors>Julien Etelain</Authors>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
@@ -29,7 +28,7 @@
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<None Include="..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
