@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using SixLabors.ImageSharp;
 
-namespace HugeImages.IO.Json
+namespace Pmad.HugeImages.IO.Json
 {
     internal sealed class RectangleConverter : JsonConverter<Rectangle>
     {

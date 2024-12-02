@@ -1,7 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace HugeImages.Processing
+namespace Pmad.HugeImages.Processing
 {
     internal interface IHugeImageProcessingContext
     {

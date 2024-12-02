@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace HugeImages.Storage
+namespace Pmad.HugeImages.Storage
 {
     /// <summary>
     /// In-Memory storage intend for unit testing

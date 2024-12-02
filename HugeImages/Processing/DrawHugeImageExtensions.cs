@@ -3,7 +3,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors.Drawing;
 
-namespace HugeImages.Processing
+namespace Pmad.HugeImages.Processing
 {
     public static class DrawHugeImageExtensions
     {

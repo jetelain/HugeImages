@@ -4,7 +4,7 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors;
 using SixLabors.ImageSharp.Processing.Processors.Drawing;
 
-namespace HugeImages.Processing.Buffer
+namespace Pmad.HugeImages.Processing.Buffer
 {
     internal class ImageProcessingOperation : IImageProcessingOperation
     {

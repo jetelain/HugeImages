@@ -1,9 +1,9 @@
-﻿using HugeImages.Processing;
+﻿using Pmad.HugeImages.Processing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace HugeImages.Storage
+namespace Pmad.HugeImages.Storage
 {
     public static class StorageExtensions
     {

@@ -2,7 +2,7 @@
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
-namespace HugeImages.Processing.Buffer
+namespace Pmad.HugeImages.Processing.Buffer
 {
     internal class DrawHugeImageOperation<TPixel> : IImageProcessingOperation
         where TPixel : unmanaged, IPixel<TPixel>

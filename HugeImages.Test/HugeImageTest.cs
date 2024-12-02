@@ -1,7 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace HugeImages.Test
+namespace Pmad.HugeImages.Test
 {
     public class HugeImageTest
     {

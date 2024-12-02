@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
-using HugeImages.Storage;
+using Pmad.HugeImages.Storage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
-namespace HugeImages
+namespace Pmad.HugeImages
 {
     public sealed class HugeImagePart<TPixel> : IDisposable, IHugeImagePart
         where TPixel : unmanaged, IPixel<TPixel>

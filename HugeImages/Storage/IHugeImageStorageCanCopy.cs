@@ -1,4 +1,4 @@
-﻿namespace HugeImages.Storage
+﻿namespace Pmad.HugeImages.Storage
 {
     public interface IHugeImageStorageCanCopy : IHugeImageStorage
     {

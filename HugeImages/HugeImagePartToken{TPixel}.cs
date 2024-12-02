@@ -1,10 +1,10 @@
-﻿using HugeImages.Processing;
+﻿using Pmad.HugeImages.Processing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
-namespace HugeImages
+namespace Pmad.HugeImages
 {
     /// <summary>
     /// Lock on a <see cref="HugeImagePart{TPixel}"/>, gives raw access to the image part.

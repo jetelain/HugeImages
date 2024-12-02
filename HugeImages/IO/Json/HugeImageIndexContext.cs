@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace HugeImages.IO.Json
+namespace Pmad.HugeImages.IO.Json
 {
     [JsonSerializable(typeof(HugeImageIndex))]
     [JsonSerializable(typeof(int[]))]

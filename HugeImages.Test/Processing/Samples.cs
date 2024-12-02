@@ -9,9 +9,9 @@ using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Tests.TestUtilities.ImageComparison;
-using HugeImages.Processing;
+using Pmad.HugeImages.Processing;
 
-namespace HugeImages.Test.Processing
+namespace Pmad.HugeImages.Test.Processing
 {
     internal static class Samples
     {

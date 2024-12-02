@@ -4,7 +4,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Processors;
 
-namespace HugeImages.Processing.Buffer
+namespace Pmad.HugeImages.Processing.Buffer
 {
     internal class ImageProcessingBuffer : IImageProcessingContext, IHugeImageProcessingContext
     {

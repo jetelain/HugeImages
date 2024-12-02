@@ -1,10 +1,10 @@
-﻿using HugeImages.Processing;
+﻿using Pmad.HugeImages.Processing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 
-namespace HugeImages.Test.Processing
+namespace Pmad.HugeImages.Test.Processing
 {
     public class DrawHugeImageExtensionsTest
     {

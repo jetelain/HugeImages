@@ -1,7 +1,7 @@
-﻿using HugeImages.Storage;
+﻿using Pmad.HugeImages.Storage;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace HugeImages.IO
+namespace Pmad.HugeImages.IO
 {
     public static class HugeImageIO
     {

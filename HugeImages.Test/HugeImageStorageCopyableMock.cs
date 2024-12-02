@@ -1,8 +1,8 @@
-﻿using HugeImages.Storage;
+﻿using Pmad.HugeImages.Storage;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Png;
 
-namespace HugeImages.Test
+namespace Pmad.HugeImages.Test
 {
     internal class HugeImageStorageCopyableMock : HugeImageStorageMock, IHugeImageStorageSlotCopySource
     {

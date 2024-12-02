@@ -1,12 +1,12 @@
 ﻿using System.Collections.Concurrent;
 using System.Text;
-using HugeImages.Storage;
+using Pmad.HugeImages.Storage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace HugeImages.Test
+namespace Pmad.HugeImages.Test
 {
     internal class HugeImageStorageMock : IHugeImageStorageSlot, IHugeImageStorage, IHugeImageStorageCanCopy
     {

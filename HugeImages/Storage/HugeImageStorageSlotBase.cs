@@ -2,7 +2,7 @@
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace HugeImages.Storage
+namespace Pmad.HugeImages.Storage
 {
     internal abstract class HugeImageStorageSlotBase : IHugeImageStorageSlot, IHugeImageStorageSlotCopySource
     {

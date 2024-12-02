@@ -1,10 +1,10 @@
-﻿using HugeImages.IO;
-using HugeImages.Processing;
-using HugeImages.Test.Processing;
+﻿using Pmad.HugeImages.IO;
+using Pmad.HugeImages.Processing;
+using Pmad.HugeImages.Test.Processing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace HugeImages.Test.IO
+namespace Pmad.HugeImages.Test.IO
 {
     public class HugeImageDeserializerTest
     {

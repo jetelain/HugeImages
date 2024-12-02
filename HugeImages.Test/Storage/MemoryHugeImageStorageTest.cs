@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HugeImages.Processing;
-using HugeImages.Storage;
-using HugeImages.Test.Processing;
+using Pmad.HugeImages.Processing;
+using Pmad.HugeImages.Storage;
+using Pmad.HugeImages.Test.Processing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace HugeImages.Test.Storage
+namespace Pmad.HugeImages.Test.Storage
 {
     public class MemoryHugeImageStorageTest
     {

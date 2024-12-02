@@ -1,10 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
-using HugeImages.Storage;
+using Pmad.HugeImages.Storage;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace HugeImages
+namespace Pmad.HugeImages
 {
     /// <summary>
     /// Image with extremely large dimensions. Use mass storage to limit memory consumption.

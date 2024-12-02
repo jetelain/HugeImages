@@ -1,4 +1,4 @@
-﻿namespace HugeImages.Storage
+﻿namespace Pmad.HugeImages.Storage
 {
     public sealed class TemporaryHugeImageStorage : HugeImageStorageBase, IHugeImageStorage, IDisposable
     {
