@@ -6,6 +6,11 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Pmad.HugeImages
 {
+    /// <summary>
+    /// Represents a single tile of a <see cref="HugeImage{TPixel}"/>.
+    /// Parts are loaded from and saved to mass storage on demand to stay within the configured memory limit.
+    /// </summary>
+    /// <typeparam name="TPixel">Pixel format.</typeparam>
     public sealed class HugeImagePart<TPixel> : IDisposable, IHugeImagePart
         where TPixel : unmanaged, IPixel<TPixel>
     {
@@ -25,14 +30,18 @@ namespace Pmad.HugeImages
             RealRectangle = realRectangle;
         }
 
+        /// <summary>Returns <c>true</c> if this part is currently loaded into RAM.</summary>
         public bool IsLoaded  => image != null;
 
         internal bool CanOffloadNow => image != null && acquired == 0 && !isOffloading;
 
+        /// <summary>Timestamp (from <see cref="System.Diagnostics.Stopwatch.GetTimestamp"/>) of the last access to this part.</summary>
         public long LastAccess { get; private set; }
 
+        /// <summary>Logical area of this part within the virtual image (no overlap border).</summary>
         public Rectangle Rectangle { get; }
 
+        /// <summary>Physical area stored on disk, extended by the overlap border on each adjacent edge.</summary>
         public Rectangle RealRectangle { get; }
 
         internal bool HasChanged { get; set; }
@@ -111,6 +120,7 @@ namespace Pmad.HugeImages
             locker.Dispose();
         }
 
+        /// <summary>Acquires the part and applies <paramref name="operation"/> to its pixel data.</summary>
         public async Task MutateAsync(Action<IImageProcessingContext> operation)
         {
             using (var token = await AcquireAsync().ConfigureAwait(false))
@@ -142,6 +152,7 @@ namespace Pmad.HugeImages
             }
         }
 
+        /// <summary>Numeric identifier of this part within its <see cref="HugeImage{TPixel}"/>.</summary>
         public int PartId => partId;
 
         internal async Task SaveFromSlot(Stream stream, IHugeImageStorageSlotCopySource copyableSlot)

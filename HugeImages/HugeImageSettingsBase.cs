@@ -4,8 +4,12 @@ using SixLabors.ImageSharp.Formats.Png;
 
 namespace Pmad.HugeImages
 {
+    /// <summary>
+    /// Base settings shared by <see cref="HugeImageSettings"/> and lightweight configurations that do not
+    /// need partitioning logic (e.g. when wrapping a single existing image).
+    /// </summary>
     public class HugeImageSettingsBase
-    {        
+    {
         /// <summary>
         /// Default value for <see cref="MemoryLimit"/>.
         /// It corresponds to 6 GiB, or with default part size, ~6 parts loaded simultaneously

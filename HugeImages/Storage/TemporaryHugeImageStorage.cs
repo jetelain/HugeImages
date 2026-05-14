@@ -1,5 +1,9 @@
 ﻿namespace Pmad.HugeImages.Storage
 {
+    /// <summary>
+    /// File-system storage that writes image parts to a randomly-named folder inside the system temp directory.
+    /// All files are deleted when <see cref="Dispose"/> is called.
+    /// </summary>
     public sealed class TemporaryHugeImageStorage : HugeImageStorageBase, IHugeImageStorage, IDisposable
     {
         private readonly string basePath = Path.Combine(Path.GetTempPath(), "HugeImages", Guid.NewGuid().ToString());

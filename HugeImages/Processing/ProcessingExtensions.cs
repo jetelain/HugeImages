@@ -7,6 +7,9 @@ using SixLabors.ImageSharp.Processing.Processors.Drawing;
 
 namespace Pmad.HugeImages.Processing
 {
+    /// <summary>
+    /// Extension methods for mutating a <see cref="HugeImage{TPixel}"/> and for generating scaled thumbnails.
+    /// </summary>
     public static class ProcessingExtensions
     {
         public static ValueTask MutateAllAsync<TPixel>(this HugeImage<TPixel> image, Action<IImageProcessingContext> operation)
