@@ -12,10 +12,10 @@ namespace Pmad.HugeImages.Storage
     {
         /// <summary>
         /// Wraps an existing <see cref="Image{TPixel}"/> as a single-part <see cref="HugeImage{TPixel}"/> backed by
-        /// temporary in-memory storage. The original <paramref name="image"/> is owned by the returned instance.
+        /// temporary storage managed by <see cref="TemporaryUniqueImageStorageSlot"/>.
         /// </summary>
-        /// <param name="image">Source image to wrap.</param>
-        /// <param name="extension">File extension (including the dot) used to select the storage format, e.g. <c>".png"</c>.</param>
+        /// <param name="image">Source image to wrap. Callers should not assume the returned instance disposes the original image.</param>
+        /// <param name="extension">File extension (including the dot) used to select the temporary storage format, e.g. <c>".png"</c>.</param>
         public static HugeImage<TPixel> FromUnique<TPixel>(Image<TPixel> image, string extension = ".png")
             where TPixel : unmanaged, IPixel<TPixel>
         {
@@ -25,8 +25,8 @@ namespace Pmad.HugeImages.Storage
         }
 
         /// <summary>
-        /// Loads a standard image file as a read-only single-part <see cref="HugeImage{TPixel}"/>.
-        /// The file format is inferred from the file extension.
+        /// Loads a standard image file as a temporary-backed, single-part <see cref="HugeImage{TPixel}"/>.
+        /// The returned image is not bound to the original file; the file format is inferred from the file extension.
         /// </summary>
         /// <param name="path">Path to the image file to load.</param>
         public static async Task<HugeImage<TPixel>> LoadUniqueAsync<TPixel>(string path)
