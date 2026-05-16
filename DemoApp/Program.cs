@@ -50,7 +50,7 @@ namespace DemoApp
             var area = new Rectangle(40_000, 40_000, 20_000, 20_000);
             await himage.MutateAreaAsync(area, d =>
             {
-                d.Fill(Color.Red);
+                d.Fill(Color.Red, area);
             });
 
             // Mutate with automatic detection of the affected area (keeps operations in memory).
@@ -145,10 +145,10 @@ namespace DemoApp
                 await himage.OffloadAsync();
             }
 
-            using var thumbnail = await himage_load(storage);
+            using var thumbnail = await LoadHugeImageAsync(storage);
             await thumbnail.SaveAsPngAsync("persistent.png");
 
-            static async Task<Image<Rgb24>> himage_load(PersistentHugeImageStorage storage)
+            static async Task<Image<Rgb24>> LoadHugeImageAsync(PersistentHugeImageStorage storage)
             {
                 using var himage = new HugeImage<Rgb24>(storage, "myimage", new Size(50_000, 50_000));
                 return await himage.ToScaledImageAsync(500, 500);

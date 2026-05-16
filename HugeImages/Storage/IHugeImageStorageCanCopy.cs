@@ -1,7 +1,8 @@
 ﻿namespace Pmad.HugeImages.Storage
 {
     /// <summary>
-    /// Extended storage interface that supports zero-copy duplication of image parts from another slot.
+    /// Extended storage interface that supports direct raw-byte copying of image parts from another slot,
+    /// avoiding a full decode/encode cycle.
     /// </summary>
     public interface IHugeImageStorageCanCopy : IHugeImageStorage
     {

@@ -82,7 +82,7 @@ The Mutate method is replaced by several methods:
 var area = new Rectangle(40_000, 40_000, 20_000, 20_000);
 await himage.MutateAreaAsync(area, d =>
 {
-    d.Fill(Color.Red);
+    d.Fill(Color.Red, area);
 });
 
 // Mutate with automatic affected-area detection.
