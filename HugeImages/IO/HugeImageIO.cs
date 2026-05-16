@@ -55,11 +55,11 @@ namespace Pmad.HugeImages.IO
 
         /// <summary>
         /// Loads a mutable copy of a <see cref="HugeImage{TPixel}"/> from a file into <paramref name="storage"/>.
-        /// The image parts are fully decoded and re-encoded into the target storage.
         /// </summary>
         /// <param name="path">Path to the .himg archive file.</param>
         /// <param name="storage">Storage backend that will hold the cloned image parts.</param>
         /// <param name="settings">Optional partitioning and memory settings; pass <c>null</c> for defaults.</param>
+        /// <remarks>The clone is not necessarily written to the supplied storage when this method returns; dirty parts may remain loaded in memory until eviction or <see cref="HugeImage{TPixel}.OffloadAsync" /> is called.</remarks>
         public static async Task<HugeImage<TPixel>> LoadCloneAsync<TPixel>(string path, IHugeImageStorage storage, HugeImageSettings? settings = null)
             where TPixel : unmanaged, IPixel<TPixel>
         {
@@ -71,11 +71,11 @@ namespace Pmad.HugeImages.IO
 
         /// <summary>
         /// Loads a mutable copy of a <see cref="HugeImage{TPixel}"/> from a stream into <paramref name="storage"/>.
-        /// The image parts are fully decoded and re-encoded into the target storage.
         /// </summary>
         /// <param name="stream">Source stream containing a .himg archive.</param>
         /// <param name="storage">Storage backend that will hold the cloned image parts.</param>
         /// <param name="settings">Optional partitioning and memory settings; pass <c>null</c> for defaults.</param>
+        /// <remarks>The clone is not necessarily written to the supplied storage when this method returns; dirty parts may remain loaded in memory until eviction or <see cref="HugeImage{TPixel}.OffloadAsync" /> is called.</remarks>
         public static async Task<HugeImage<TPixel>> LoadCloneAsync<TPixel>(Stream stream, IHugeImageStorage storage, HugeImageSettings? settings = null)
                     where TPixel : unmanaged, IPixel<TPixel>
         {
@@ -91,6 +91,7 @@ namespace Pmad.HugeImages.IO
         /// <param name="storage">Storage backend that will hold the cloned image parts.</param>
         /// <param name="name">Name used to identify the slot in <paramref name="storage"/>.</param>
         /// <param name="settings">Optional partitioning and memory settings; pass <c>null</c> for defaults.</param>
+        /// <remarks>The clone is not necessarily written to the supplied storage when this method returns; dirty parts may remain loaded in memory until eviction or <see cref="HugeImage{TPixel}.OffloadAsync" /> is called.</remarks>
         public static async Task<HugeImage<TPixel>> LoadCloneAsync<TPixel>(string path, IHugeImageStorage storage, string name, HugeImageSettings? settings = null)
             where TPixel : unmanaged, IPixel<TPixel>
         {
@@ -108,6 +109,7 @@ namespace Pmad.HugeImages.IO
         /// <param name="storage">Storage backend that will hold the cloned image parts.</param>
         /// <param name="name">Name used to identify the slot in <paramref name="storage"/>.</param>
         /// <param name="settings">Optional partitioning and memory settings; pass <c>null</c> for defaults.</param>
+        /// <remarks>The clone is not necessarily written to the supplied storage when this method returns; dirty parts may remain loaded in memory until eviction or <see cref="HugeImage{TPixel}.OffloadAsync" /> is called.</remarks>
         public static async Task<HugeImage<TPixel>> LoadCloneAsync<TPixel>(Stream stream, IHugeImageStorage storage, string name, HugeImageSettings? settings = null)
                     where TPixel : unmanaged, IPixel<TPixel>
         {

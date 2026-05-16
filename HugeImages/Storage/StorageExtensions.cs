@@ -1,6 +1,5 @@
 ﻿using Pmad.HugeImages.Processing;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Advanced;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Pmad.HugeImages.Storage
@@ -96,6 +95,7 @@ namespace Pmad.HugeImages.Storage
         /// <param name="himage">Source image to clone.</param>
         /// <param name="storage">Storage backend that will hold the cloned image parts.</param>
         /// <param name="settings">Optional partitioning and memory settings; pass <c>null</c> to inherit the defaults.</param>
+        /// <remarks>The clone is not necessarily written to the supplied storage when this method returns; dirty parts may remain loaded in memory until eviction or <see cref="HugeImage{TPixel}.OffloadAsync" /> is called.</remarks>
         public static async Task<HugeImage<TPixel>> CloneAsync<TPixel>(this HugeImage<TPixel> himage, IHugeImageStorage storage, HugeImageSettings? settings = null)
             where TPixel : unmanaged, IPixel<TPixel>
         {
@@ -112,6 +112,7 @@ namespace Pmad.HugeImages.Storage
         /// <param name="storage">Storage backend that will hold the cloned image parts.</param>
         /// <param name="name">Name used to identify the slot in <paramref name="storage"/>.</param>
         /// <param name="settings">Optional partitioning and memory settings; pass <c>null</c> to inherit the defaults.</param>
+        /// <remarks>The clone is not necessarily written to the supplied storage when this method returns; dirty parts may remain loaded in memory until eviction or <see cref="HugeImage{TPixel}.OffloadAsync" /> is called.</remarks>
         public static async Task<HugeImage<TPixel>> CloneAsync<TPixel>(this HugeImage<TPixel> himage, IHugeImageStorage storage, string name, HugeImageSettings? settings = null)
             where TPixel : unmanaged, IPixel<TPixel>
         {
