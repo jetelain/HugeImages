@@ -184,11 +184,13 @@ using var himage = new HugeImage<Rgb24>(new TemporaryHugeImageStorage(), new Siz
 
 | Property | Default | Description |
 |---|---|---|
-| MemoryLimit | 6 GiB | Maximum RAM used by a single HugeImage instance. |
+| MemoryLimit | 6 GiB | Controls how many tiles may be loaded simultaneously: `maxLoadedParts = MemoryLimit / (tileWidth * tileHeight * bytesPerPixel)`. See note below. |
 | PartMaxSize | 16 384 | Maximum width/height of a single tile, **including** the overlap border. |
 | PartOverlap | 16 | Overlap in pixels between adjacent tiles. Must be >= the heaviest operation radius (e.g. blur radius). |
 | StorageFormat | PNG | Image format used to encode tiles on disk. |
 | Configuration | Configuration.Default | ImageSharp configuration. |
+
+> **MemoryLimit is not a hard memory cap.** It only determines how many tiles are kept in RAM at once. It does *not* account for ImageSharp processor buffers (e.g. a Gaussian blur needs a second buffer of equal size), thumbnails or other intermediate images, encoder/decoder working memory, or .NET object overhead. To stay within a physical-memory budget, set `MemoryLimit` well below the available RAM to leave headroom for these additional costs.
 
 > **Choosing PartOverlap**: if you plan to apply a GaussianBlur with radius 20, set PartOverlap to at least 20. Insufficient overlap will cause visible seam artefacts at tile boundaries.
 
