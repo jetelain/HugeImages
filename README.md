@@ -1,72 +1,222 @@
-# HugeImages
-Library to manipulate extremely large images with [ImageSharp](https://github.com/SixLabors/ImageSharp) from [SixLabors](https://sixlabors.com/)
+ï»¿# HugeImages
 
-Image is splitted into parts that can be handled safely by ImageSharp (default is 16 kilo x 16 kilo => 256 mega pixels, 1 GiB with 32bpp)
+A .NET library for manipulating extremely large images with [ImageSharp](https://github.com/SixLabors/ImageSharp) from [SixLabors](https://sixlabors.com/).
 
-Use mass storage to limit memory consumption.
+## Overview
 
-Can handle tera, or even peta, pixels images, depending on mass storage capacity and file format encoder performance (png by default).
+The virtual image is split into overlapping tiles (*parts*) that ImageSharp can handle safely. Only a configurable number of tiles are kept in RAM at any time; the rest are stored on disk. This drastically reduces memory requirements compared to loading the whole image at once.
 
-Theoric limit is 2 giga x 2 giga => 4 exa pixels (16 EiB with 32bpp).
+| Approach | 100 000 x 100 000 fill | 100 000 x 100 000 blur |
+|---|---|---|
+| Regular ImageSharp | ~30 GiB RAM | ~60 GiB RAM (fails in practice) |
+| **HugeImages** | **~6 GiB RAM + ~30 MiB disk** | **~8 GiB RAM** |
 
-Note: ImageSharp drawing primitives are float32 encoded, this can result in precision loss on very large images (more than 1px error with dimensions above 8 mega x 8 mega square => 64 tera pixels, 256 TiB with 32bpp).
+Default configuration: tiles of 16 384 x 16 384 pixels (1 GiB each at 32 bpp) with a 16-pixel overlap.
 
-Each part have an overlap with adjacent parts to allow each processing operation to be done independtly on each part. This reduce the number of parts required to be simultaneously loaded into memory.
+**Theoretical image size limit**: 2 giga x 2 giga = 4 exa-pixels (16 EiB at 32 bpp).
 
-## Usage
+> **Precision note** - ImageSharp drawing primitives use 32-bit floats. Coordinates above ~8 mega pixels may lose sub-pixel precision (> 1 px error for dimensions above 8 M x 8 M).
 
-### Drawing / Processing
+---
 
-The class `HugeImage<TPixel>` is intend to be used like a regular `Image<TPixel>` but most operations are async to allow I/O operations.
+## Installation
 
-The Mutate method is replaced by differents methods :
-- `MutateAsync` : applies a mutation with automatic detection of affected area. Supplied code is called only once, but operation list is kept into memory. If operation list is very large it may consumme a lot of memory.
-- `MutateAreaAsync` : applies a mutation on specified area only. Supplied code is called for each affected part.
-- `MutateAllAsync` : applies a mutation that affects all surface of virtual image. Supplied code is called for each part of image.
+```
+dotnet add package Pmad.HugeImages
+```
 
-Each method have a Parallel variation that will parallelize mutations on each affected part. Those Parallel methods are suitable only for Fill and Draw operations, as most operations are already parallelized by ImageSharp.
+---
 
-```cs
-using var himage = new HugeImage<Rgb24>(new TemporaryHugeImageStorage(), new Size(100_000, 100_000));
-// Needs ~6 GiB of RAM + 30 MiB of mass storage
-// Regular ImageSharp will ask for ~30 GiB do to the same
+## Quick start
+
+```csharp
+using Pmad.HugeImages;
+using Pmad.HugeImages.Processing;
+using Pmad.HugeImages.Storage;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+
+// Creates a 100 000 x 100 000 image using temporary disk storage.
+// ~6 GiB RAM + ~30 MiB disk (vs ~30 GiB RAM with regular ImageSharp).
+using var storage = new TemporaryHugeImageStorage();
+using var himage = new HugeImage<Rgb24>(storage, new Size(100_000, 100_000));
+
+// Fill and draw operations are independent per tile - use the Parallel variant.
 await himage.MutateAllParallelAsync(d =>
 {
     d.Fill(new SolidBrush(Color.Blue), new EllipsePolygon(new PointF(50_000, 50_000), 50_000));
 });
-// Needs ~8 GiB of RAM (GaussianBlur uses a double-buffer)
-// Regular ImageSharp will ask for ~60 GiB do to the same, but operation will fail due to an internal error
+
+// Most ImageSharp operations are already multi-threaded; use the non-parallel variant.
+// (~8 GiB RAM due to double-buffer requirement; ~60 GiB with regular ImageSharp, and fails with an error)
 await himage.MutateAllAsync(d =>
 {
-    d.GaussianBlur(10); 
+    d.GaussianBlur(10);
+});
+
+// Flush all tiles from RAM to disk.
+await himage.OffloadAsync();
+```
+
+---
+
+## Drawing and mutating
+
+`HugeImage<TPixel>` is designed to be used like a regular `Image<TPixel>`, but all mutation methods are async to allow transparent I/O.
+
+The Mutate method is replaced by several methods:
+
+| Method | Description |
+|---|---|
+| MutateAllAsync | Applies the operation to every tile sequentially. |
+| MutateAllParallelAsync | Same, but tiles are processed in parallel. Best for fill/draw operations. |
+| MutateAreaAsync | Applies the operation only to tiles that intersect the given rectangle. |
+| MutateAreaParallelAsync | Same, but tiles are processed in parallel. |
+| MutateAsync | Detects the affected area automatically, then delegates to MutateAreaAsync. The operation list is buffered in memory first. |
+| MutateParallelAsync | Like MutateAsync but parallelises tile processing. |
+
+```csharp
+// Mutate only a specific area.
+var area = new Rectangle(40_000, 40_000, 20_000, 20_000);
+await himage.MutateAreaAsync(area, d =>
+{
+    d.Fill(Color.Red, area);
+});
+
+// Mutate with automatic affected-area detection.
+await himage.MutateAsync(d =>
+{
+    d.Fill(new SolidBrush(Color.Green), new EllipsePolygon(new PointF(50_000, 50_000), 5_000));
 });
 ```
 
-Note: You can reduce memory limit with `HugeImageSettings`.
+> Use the Parallel variants only for **fill and draw** operations. Most ImageSharp processing operations (resize, blur, ...) are already parallelised internally.
 
-### Thumbnail 
+---
 
-The method `ToScaledImageAsync` can be used to generate a regular (scaled) image.
+## Thumbnail
 
-```cs
-using var thumbail = await himage.ToScaledImageAsync(1000, 1000);
+```csharp
+using var thumbnail = await himage.ToScaledImageAsync(1000, 1000);
+await thumbnail.SaveAsPngAsync("thumbnail.png");
 ```
 
-### Tiling
+---
 
-To extract a part of an HugeImage, you can use the `DrawHugeImageAsync` on a regular Image.
+## Tiling - extract a slice
 
-This method takes as argument :
-- HugeImage
-- coordinates in the source HugeImage
-- coordinates in the target Image (optionnal, (0,0) by default)
-- size of the draw operation (optionnal, size of target Image by default)
-- opacity (optionnal, 1 by default)
+Use DrawHugeImage (or DrawHugeImageAsync) on a regular Image to extract any rectangular area of a HugeImage.
 
-```cs
+```csharp
+// Extract the top of the circle: source area (49 500, 0) -> (50 500, 1 000).
 using var slice = new Image<Rgb24>(1000, 1000);
 slice.Mutate(d =>
 {
     d.DrawHugeImage(himage, new Point(49_500, 0));
 });
+await slice.SaveAsPngAsync("circletop.png");
+
+// Extract with explicit target location and size.
+using var slice2 = new Image<Rgb24>(2000, 2000);
+slice2.Mutate(d =>
+{
+    d.DrawHugeImage(himage, new Point(49_000, 49_000), new Point(500, 500), new Size(1000, 1000));
+});
+await slice2.SaveAsPngAsync("circlecenter.png");
+```
+
+DrawHugeImage arguments:
+1. sourceImage - the HugeImage<TPixel> to read from.
+2. sourceLocation - top-left corner of the area to read in the source image.
+3. targetLocation (optional, default (0,0)) - top-left corner of the destination in the target image.
+4. size (optional, default: target image size) - size of the area to copy.
+5. opacity (optional, default 1) - blending opacity.
+
+---
+
+## Storage backends
+
+| Class | Description |
+|---|---|
+| TemporaryHugeImageStorage | Writes tiles to a randomly-named folder in the system temp directory. All files are deleted on Dispose. |
+| PersistentHugeImageStorage | Writes tiles under a given directory. Tiles survive the process lifetime. |
+| MemoryHugeImageStorage | Keeps tiles in RAM. Intended for unit testing. |
+
+```csharp
+// Persistent storage: changes survive the application session.
+var storagePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "MyHugeImageStorage");
+Directory.CreateDirectory(storagePath);
+
+using var storage = new PersistentHugeImageStorage(storagePath);
+
+using (var himage = new HugeImage<Rgb24>(storage, "myimage", new Size(50_000, 50_000)))
+{
+    await himage.MutateAllParallelAsync(d =>
+    {
+        d.Fill(new SolidBrush(Color.DarkGreen), new EllipsePolygon(new PointF(25_000, 25_000), 25_000));
+    });
+    // Always flush before disposing when using persistent storage.
+    await himage.OffloadAsync();
+}
+```
+
+---
+
+## Custom settings
+
+HugeImageSettings controls partitioning and memory usage.
+
+```csharp
+var settings = new HugeImageSettings
+{
+    // Limit RAM usage to 2 GiB for this image instance.
+    MemoryLimit = 2L * 1024 * 1024 * 1024,
+    // Reduce tile size to 8192 x 8192 (256 MiB at 32 bpp).
+    PartMaxSize = 8192,
+    // Set overlap to 32 pixels to support blur radius up to 32.
+    PartOverlap = 32
+};
+
+using var storage = new TemporaryHugeImageStorage();
+using var himage = new HugeImage<Rgb24>(storage, new Size(100_000, 100_000), settings);
+```
+
+| Property | Default | Description |
+|---|---|---|
+| MemoryLimit | 6 GiB | Controls how many tiles may be loaded simultaneously: `maxLoadedParts = MemoryLimit / (tileWidth * tileHeight * bytesPerPixel)`. See note below. |
+| PartMaxSize | 16 384 | Maximum width/height of a single tile, **including** the overlap border. |
+| PartOverlap | 16 | Overlap in pixels between adjacent tiles. Must be >= the heaviest operation radius (e.g. blur radius). |
+| StorageFormat | PNG | Image format used to encode tiles on disk. |
+| Configuration | Configuration.Default | ImageSharp configuration. |
+
+> **MemoryLimit is not a hard memory cap.** It only determines how many tiles are kept in RAM at once. It does *not* account for ImageSharp processor buffers (e.g. a Gaussian blur needs a second buffer of equal size), thumbnails or other intermediate images, encoder/decoder working memory, or .NET object overhead. To stay within a physical-memory budget, set `MemoryLimit` well below the available RAM to leave headroom for these additional costs.
+
+> **Choosing PartOverlap**: if you plan to apply a GaussianBlur with radius 20, set PartOverlap to at least 20. Insufficient overlap will cause visible seam artefacts at tile boundaries.
+
+---
+
+## Save and load
+
+HugeImages provides its own archive format (.himg) that bundles all tiles in a single file.
+
+```csharp
+using Pmad.HugeImages.IO;
+
+var filePath = "myimage.himg";
+
+// Save to the HugeImage archive format.
+await himage.SaveAsync(filePath);
+
+// Load as read-only (zero disk-copy; archive file stays open until disposed).
+using var readOnly = await HugeImageIO.LoadReadOnlyLockedAsync<Rgb24>(filePath);
+
+// Load a mutable clone into new storage.
+using var storage = new TemporaryHugeImageStorage();
+using var mutable = await HugeImageIO.LoadCloneAsync<Rgb24>(filePath, storage);
+await mutable.MutateAllAsync(d => d.GaussianBlur(5));
+using var thumbnail = await mutable.ToScaledImageAsync(500, 500);
+await thumbnail.SaveAsPngAsync("loaded_blurred.png");
 ```

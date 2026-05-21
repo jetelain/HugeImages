@@ -18,22 +18,47 @@ namespace Pmad.HugeImages
         private readonly Size size;
         private readonly int maxLoadedParts;
 
+        /// <summary>Creates a new <see cref="HugeImage{TPixel}"/> with a named slot and default settings.</summary>
+        /// <param name="storage">Storage backend that will hold the image parts.</param>
+        /// <param name="name">Name used to identify this image in <paramref name="storage"/>.</param>
+        /// <param name="size">Total dimensions of the virtual image.</param>
+        /// <param name="background">Background pixel value used for uninitialised areas.</param>
         public HugeImage(IHugeImageStorage storage, string name, Size size, TPixel background = default)
             : this(storage, name, size, new HugeImageSettings(), background)
         {
         }
 
+        /// <summary>Creates a new <see cref="HugeImage{TPixel}"/> with a randomly-generated name.</summary>
+        /// <param name="storage">Storage backend that will hold the image parts.</param>
+        /// <param name="size">Total dimensions of the virtual image.</param>
+        /// <param name="settings">Partitioning and memory settings, or <c>null</c> for defaults.</param>
+        /// <param name="background">Background pixel value used for uninitialised areas.</param>
         public HugeImage(IHugeImageStorage storage, Size size, HugeImageSettings? settings = null, TPixel background = default)
             : this(storage, Guid.NewGuid().ToString(), size, settings ?? new HugeImageSettings(), background)
         {
 
         }
 
+        /// <summary>Creates a new <see cref="HugeImage{TPixel}"/> with a named slot and explicit settings.</summary>
+        /// <param name="storage">Storage backend that will hold the image parts.</param>
+        /// <param name="name">Name used to identify this image in <paramref name="storage"/>.</param>
+        /// <param name="size">Total dimensions of the virtual image.</param>
+        /// <param name="settings">Partitioning and memory settings.</param>
+        /// <param name="background">Background pixel value used for uninitialised areas.</param>
         public HugeImage(IHugeImageStorage storage, string name, Size size, HugeImageSettings settings, TPixel background = default)
             : this(storage.CreateSlot(name, settings), size, settings, settings, background)
         {
         }
 
+        /// <summary>
+        /// Low-level constructor that accepts a pre-created <see cref="IHugeImageStorageSlot"/> and a custom
+        /// <see cref="IHugeImagePartitioner"/>. Use the other constructors for typical scenarios.
+        /// </summary>
+        /// <param name="slot">Storage slot that will persist the image parts.</param>
+        /// <param name="size">Total dimensions of the virtual image.</param>
+        /// <param name="settings">Memory and format settings.</param>
+        /// <param name="partitioner">Strategy used to divide the image into parts.</param>
+        /// <param name="background">Background pixel value used for uninitialised areas.</param>
         public HugeImage(IHugeImageStorageSlot slot, Size size, HugeImageSettingsBase settings, IHugeImagePartitioner partitioner, TPixel background)
         {
             this.slot = slot;

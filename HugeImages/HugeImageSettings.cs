@@ -2,6 +2,11 @@
 
 namespace Pmad.HugeImages
 {
+    /// <summary>
+    /// Settings that control how a <see cref="HugeImage{TPixel}"/> is partitioned and stored.
+    /// Inherits memory and format settings from <see cref="HugeImageSettingsBase"/> and also implements
+    /// <see cref="IHugeImagePartitioner"/> using a regular grid strategy.
+    /// </summary>
     public class HugeImageSettings : HugeImageSettingsBase, IHugeImagePartitioner
     {
         /// <summary>

@@ -5,6 +5,10 @@ using SixLabors.ImageSharp.Processing.Processors.Drawing;
 
 namespace Pmad.HugeImages.Processing
 {
+    /// <summary>
+    /// Extension methods that allow drawing a <see cref="HugeImage{TPixel}"/> onto a regular
+    /// <see cref="IImageProcessingContext"/> or another <see cref="HugeImage{TPixel}"/>.
+    /// </summary>
     public static class DrawHugeImageExtensions
     {
         public static void DrawHugeImage<TPixel>(this IImageProcessingContext target, HugeImage<TPixel> sourceImage, Point sourceLocation, float opacity = 1f)
