@@ -11,6 +11,8 @@ namespace Pmad.HugeImages.Storage
         private readonly IImageEncoder encoder;
         private readonly IImageDecoder decoder;
 
+        internal string SlotPath => path;
+
         public HugeImageStorageSlotBase(string path, HugeImageSettingsBase settings)
             : this(path, settings.Configuration, settings.StorageFormat)
         {
