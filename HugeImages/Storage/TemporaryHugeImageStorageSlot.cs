@@ -9,7 +9,7 @@
 
         public override void Dispose()
         {
-            Directory.Delete(path, true);
+            DirectoryHelper.CleanupDirectory(path);
         }
     }
 }

@@ -15,7 +15,7 @@
 
         public void Dispose()
         {
-            Directory.Delete(basePath, true);
+            DirectoryHelper.CleanupDirectory(basePath);
         }
     }
 }

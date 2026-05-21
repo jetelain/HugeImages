@@ -44,7 +44,7 @@ namespace Pmad.HugeImages.Storage
         public static async Task<HugeImage<TPixel>> LoadUniqueReadWriteAsync<TPixel>(string path)
             where TPixel : unmanaged, IPixel<TPixel>
         {
-            var image = await Image.LoadAsync(path).ConfigureAwait(false);
+            var image = await Image.LoadAsync<TPixel>(path).ConfigureAwait(false);
 
             var settings = new HugeImageSettingsBase() { Configuration = image.Configuration };
 
