@@ -41,7 +41,8 @@ using SixLabors.ImageSharp.Processing;
 
 // Creates a 100 000 x 100 000 image using temporary disk storage.
 // ~6 GiB RAM + ~30 MiB disk (vs ~30 GiB RAM with regular ImageSharp).
-using var himage = new HugeImage<Rgb24>(new TemporaryHugeImageStorage(), new Size(100_000, 100_000));
+using var storage = new TemporaryHugeImageStorage();
+using var himage = new HugeImage<Rgb24>(storage, new Size(100_000, 100_000));
 
 // Fill and draw operations are independent per tile - use the Parallel variant.
 await himage.MutateAllParallelAsync(d =>
@@ -64,7 +65,7 @@ await himage.OffloadAsync();
 
 ## Drawing and mutating
 
-HugeImage<TPixel> is designed to be used like a regular Image<TPixel>, but all mutation methods are async to allow transparent I/O.
+`HugeImage<TPixel>` is designed to be used like a regular `Image<TPixel>`, but all mutation methods are async to allow transparent I/O.
 
 The Mutate method is replaced by several methods:
 
@@ -179,7 +180,8 @@ var settings = new HugeImageSettings
     PartOverlap = 32
 };
 
-using var himage = new HugeImage<Rgb24>(new TemporaryHugeImageStorage(), new Size(100_000, 100_000), settings);
+using var storage = new TemporaryHugeImageStorage();
+using var himage = new HugeImage<Rgb24>(storage, new Size(100_000, 100_000), settings);
 ```
 
 | Property | Default | Description |

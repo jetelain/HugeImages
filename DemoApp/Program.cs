@@ -28,7 +28,8 @@ namespace DemoApp
             // Creates a 100,000 x 100,000 image using temporary disk storage.
             // With HugeImage: ~6 GiB RAM + ~30 MiB disk storage.
             // Without HugeImage: ~30 GiB RAM would be required.
-            using var himage = new HugeImage<Rgb24>(new TemporaryHugeImageStorage(), new Size(100_000, 100_000));
+            using var storage = new TemporaryHugeImageStorage();
+            using var himage = new HugeImage<Rgb24>(storage, new Size(100_000, 100_000));
 
             // Fill and draw operations are independent per part: use the Parallel variant.
             await himage.MutateAllParallelAsync(d =>
@@ -67,7 +68,8 @@ namespace DemoApp
         // --- Example 2: Tiling – extract a slice of a HugeImage ---
         static async Task TilingExample()
         {
-            using var himage = new HugeImage<Rgb24>(new TemporaryHugeImageStorage(), new Size(100_000, 100_000));
+            using var storage = new TemporaryHugeImageStorage();
+            using var himage = new HugeImage<Rgb24>(storage, new Size(100_000, 100_000));
             await himage.MutateAllParallelAsync(d =>
             {
                 d.Fill(new SolidBrush(Color.Blue), new EllipsePolygon(new PointF(50_000, 50_000), 50_000));
