@@ -8,6 +8,8 @@
     {
         private readonly string basePath = Path.Combine(Path.GetTempPath(), "HugeImages", Guid.NewGuid().ToString());
 
+        internal string BasePath => basePath;
+
         internal override HugeImageStorageSlotBase CreateSlot(string name, HugeImageSettingsBase settings)
         {
             return new TemporaryHugeImageStorageSlot(Path.Combine(basePath, name), settings);
@@ -15,7 +17,7 @@
 
         public void Dispose()
         {
-            Directory.Delete(basePath, true);
+            DirectoryHelper.CleanupDirectory(basePath);
         }
     }
 }
