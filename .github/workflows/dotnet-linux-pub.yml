@@ -20,7 +20,9 @@ jobs:
       run: dotnet restore HugeImages.sln
 
     - name: Build
-      run: dotnet build --no-restore --configuration Release HugeImages.sln -p:PublicRelease=true -p:SixLaborsLicenseKey="${{secrets.SixLaborsLicenseKey}}"
+      run: dotnet build --no-restore --configuration Release HugeImages.sln -p:PublicRelease=true
+      env:
+        SixLaborsLicenseKey: ${{secrets.SixLaborsLicenseKey}}
 
     - name: Test
       run: dotnet test --no-build --verbosity normal --configuration Release HugeImages.sln
